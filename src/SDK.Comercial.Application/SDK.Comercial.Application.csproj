@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>SDK.Comercial.Application</RootNamespace>
+        <AssemblyName>SDK.Comercial.Application</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SDK.Comercial.Domain\SDK.Comercial.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

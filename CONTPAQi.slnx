@@ -1,3 +1,14 @@
 <Solution>
-  <Project Path="SDK.Comercial/SDK.Comercial.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="Readme.md" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Project Path="src/SDK.Comercial.Application/SDK.Comercial.Application.csproj" />
+  <Project Path="src/SDK.Comercial.Domain/SDK.Comercial.Domain.csproj" />
+  <Project Path="src/SDK.Comercial.Infrastructure/SDK.Comercial.Infrastructure.csproj" />
+  <Project Path="src/SDK.Comercial.Web/SDK.Comercial.Web.csproj" />
 </Solution>

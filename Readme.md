@@ -15,7 +15,7 @@ Solucion para integrar el SDK de CONTPAQi Comercial Premium , centralizando la c
 Antes de ejecutar el proyecto, asegúrate de contar con:
 
 - Una instalación de CONTPAQi Comercial Premium con licencia activada.
-- Para el timbrado de documentos se requiere una licencia de 5 Usuarios.
+- Para el timbrado de documentos se requiere una licencia de 5 usuarios.
 
 
 ## Instalación
@@ -23,5 +23,5 @@ Antes de ejecutar el proyecto, asegúrate de contar con:
 Clona el repositorio:
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/Ricard01/CONTPAQi.git
 cd CONTPAQi
