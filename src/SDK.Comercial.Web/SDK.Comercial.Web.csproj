@@ -3,10 +3,12 @@
     <PropertyGroup>
         <RootNamespace>SDK.Comercial.Web</RootNamespace>
         <AssemblyName>SDK.Comercial.Web</AssemblyName>
-        <!-- MGWServicios.dll es de 32 bits: el proceso debe ser x86. -->
+        <!-- El SDK de CONTPAQi Comercial requiere proceso de 32 bits -->
         <PlatformTarget>x86</PlatformTarget>
         <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-        <SelfContained>false</SelfContained>
+
+        <!-- Incluye el runtime .NET x86 dentro de la app, así no es necesario instalar en el equipo -->
+        <SelfContained>true</SelfContained>
     </PropertyGroup>
 
     <ItemGroup>
