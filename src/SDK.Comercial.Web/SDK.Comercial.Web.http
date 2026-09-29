@@ -1,5 +1,11 @@
 @SDK.Comercial.Web_HostAddress = http://localhost:5087
 
+GET {{SDK.Comercial.Web_HostAddress}}/api/conexion
+Accept: application/json
+
+###
+
+
 GET {{SDK.Comercial.Web_HostAddress}}/api/empresas/
 Accept: application/json
 

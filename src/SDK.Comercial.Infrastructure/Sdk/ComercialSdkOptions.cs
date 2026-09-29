@@ -17,6 +17,12 @@ public sealed class ComercialSdkOptions
 
     public string? Contrasena { get; set; }
 
+    /// <summary>
+    /// Carpeta de la empresa que se abre al iniciar el SDK y que usan las operaciones que no indican otra
+    /// (p. ej. <c>C:\Compac\Empresas\adMiEmpresa</c>). Opcional; las rutas disponibles salen de <c>GET /api/empresas</c>.
+    /// </summary>
+    public string? Empresa { get; set; }
+
     /// <summary>Número máximo de operaciones en espera en la cola del SDK.</summary>
     public int CapacidadCola { get; set; } = 100;
 }

@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SDK.Comercial.Application.Conexion;
 using SDK.Comercial.Application.Empresas;
+using SDK.Comercial.Infrastructure.Conexion;
 using SDK.Comercial.Infrastructure.Empresas;
 using SDK.Comercial.Infrastructure.Sdk;
 using SDK.Comercial.Infrastructure.Sdk.Cola;
@@ -17,6 +19,7 @@ public static class DependencyInjection
         services.AddSingleton<SdkColaTrabajo>();
         services.AddHostedService<SdkWorker>();
 
+        services.AddSingleton<IConexionComercial, ConexionComercial>();
         services.AddSingleton<IEmpresaRepository, EmpresaRepository>();
 
         return services;
