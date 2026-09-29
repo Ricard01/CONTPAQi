@@ -70,7 +70,7 @@ Reglas:
 
 ## Configuración
 
-- `appsettings.json` → sección `ComercialSdk` (ruta de instalación, nombre del sistema, tamaño de la cola, etc.).
+- `appsettings.json` → sección `ComercialSdk` (ruta de instalación, nombre del sistema, empresa predeterminada, tamaño de la cola, etc.). La empresa predeterminada (`Empresa`) se abre al iniciar el SDK y la usa `SdkContexto.UsarEmpresa()` sin argumentos; `GET /api/conexion` la abre para comprobar la conexión.
 - Credenciales (usuario/contraseña de Comercial, contraseña de CSD) **nunca** en el repositorio: usar user-secrets en desarrollo y variables de entorno o configuración del servidor en producción.
 
 ## Convenciones de build
