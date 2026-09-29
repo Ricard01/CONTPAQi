@@ -3,6 +3,10 @@
     <PropertyGroup>
         <RootNamespace>SDK.Comercial.Web</RootNamespace>
         <AssemblyName>SDK.Comercial.Web</AssemblyName>
+        <!-- MGWServicios.dll es de 32 bits: el proceso debe ser x86. -->
+        <PlatformTarget>x86</PlatformTarget>
+        <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+        <SelfContained>false</SelfContained>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,8 +16,8 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
     </ItemGroup>
-    
 
 </Project>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <RootNamespace>SDK.Comercial.Infrastructure</RootNamespace>
@@ -6,7 +6,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\SDK.Comercial.Application\SDK.Comercial.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="SDK.Comercial.Infrastructure.Tests" />
     </ItemGroup>
 
 </Project>

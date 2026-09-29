@@ -45,6 +45,17 @@ Clean architecture. Las dependencias apuntan hacia adentro: `Web → Infrastruct
 | `src/SDK.Comercial.Application` | Casos de uso, DTOs, interfaces (puertos) como el ejecutor de operaciones del SDK y los repositorios/servicios de CONTPAQi. No conoce el SDK nativo. |
 | `src/SDK.Comercial.Infrastructure` | Interop con `MGWServicios.dll` (P/Invoke), la cola de Channels con su hilo consumidor, implementación de los puertos, lectura de configuración del SDK. **Único lugar donde existe código nativo.** |
 | `src/SDK.Comercial.Web` | Host ASP.NET Core: endpoints, registro de dependencias, configuración como Servicio de Windows, manejo global de errores (ProblemDetails), OpenAPI. |
+| `tests/SDK.Comercial.Infrastructure.Tests` | Pruebas (xUnit) de la cola y el hilo consumidor usando un SDK falso; no requieren la DLL. |
+
+Piezas clave en Infrastructure:
+- `Sdk/Native/ComercialSdkNative.cs`: declaraciones P/Invoke de `MGWServicios.dll`.
+- `Sdk/ComercialSdk.cs` (`IComercialSdk`): inicio/término del SDK y apertura/cierre de empresa.
+- `Sdk/Cola/SdkColaTrabajo.cs`: la cola (`EncolarAsync(contexto => ...)`), única puerta de entrada al SDK.
+- `Sdk/Cola/SdkWorker.cs`: `BackgroundService` que crea el hilo consumidor dedicado.
+- `Sdk/Cola/SdkContexto.cs`: estado dentro del hilo (`UsarEmpresa(ruta)` abre la empresa solo si cambió).
+- Cada repositorio (p. ej. `Empresas/EmpresaRepository.cs`) implementa un puerto de Application encolando su trabajo.
+
+Para agregar una operación nueva: definir el puerto en Application, implementarlo en Infrastructure con `cola.EncolarAsync(...)` llamando a `ComercialSdkNative` dentro de la lambda, registrarlo en `DependencyInjection.cs` y exponerlo con un endpoint en Web.
 
 Reglas:
 - El P/Invoke vive en una clase `static` interna de Infrastructure (p. ej. `ComercialSdkNative`); ningún otro proyecto la ve.
@@ -73,6 +84,7 @@ Reglas:
 
 ```powershell
 dotnet build CONTPAQi.slnx
+dotnet test CONTPAQi.slnx
 dotnet run --project src/SDK.Comercial.Web            # ejecuta como consola (x86)
 dotnet publish src/SDK.Comercial.Web -c Release -r win-x86 --self-contained false
 # Instalar como servicio (PowerShell como administrador):
