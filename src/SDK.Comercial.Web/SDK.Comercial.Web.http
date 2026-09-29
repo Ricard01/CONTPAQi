@@ -1,6 +1,6 @@
 @SDK.Comercial.Web_HostAddress = http://localhost:5087
 
-GET {{SDK.Comercial.Web_HostAddress}}/weatherforecast/
+GET {{SDK.Comercial.Web_HostAddress}}/api/empresas/
 Accept: application/json
 
 ###
