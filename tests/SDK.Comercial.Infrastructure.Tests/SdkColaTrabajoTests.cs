@@ -107,7 +107,7 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
     public async Task Abre_la_empresa_predeterminada_al_iniciar_y_la_cierra_al_terminar()
     {
         var sdk = new FakeComercialSdk();
-        var opciones = Options.Create(new ComercialSdkOptions { Empresa = @"C:\Empresas\A" });
+        var opciones = Options.Create(new ComercialSdkOptions { RutaEmpresa = @"C:\Empresas\A" });
         var cola = new SdkColaTrabajo(opciones);
         using var worker = new SdkWorker(cola, sdk, opciones, NullLogger<SdkWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);
@@ -123,7 +123,7 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
     public async Task Si_la_empresa_predeterminada_no_abre_al_iniciar_se_reintenta_en_la_siguiente_operacion()
     {
         var sdk = new FakeComercialSdk { FallosAlAbrir = 1 };
-        var opciones = Options.Create(new ComercialSdkOptions { Empresa = @"C:\Empresas\A" });
+        var opciones = Options.Create(new ComercialSdkOptions { RutaEmpresa = @"C:\Empresas\A" });
         var cola = new SdkColaTrabajo(opciones);
         using var worker = new SdkWorker(cola, sdk, opciones, NullLogger<SdkWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);

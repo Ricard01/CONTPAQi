@@ -22,6 +22,8 @@ internal sealed class SdkColaTrabajo(IOptions<ComercialSdkOptions> opciones)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // El endpoint entrega la operación, pero no la ejecuta en su hilo HTTP. SdkWorker la
+        // consumirá en el hilo dedicado y completará Resultado con el valor o la excepción.
         var trabajo = new SdkTrabajo<T>(operacion, cancellationToken);
         trabajo.RegistrarCancelacion();
         try
@@ -33,6 +35,7 @@ internal sealed class SdkColaTrabajo(IOptions<ComercialSdkOptions> opciones)
             throw new ComercialSdkException("El servicio del SDK se está deteniendo.", ex);
         }
 
+        // La espera es asíncrona: no ocupa un hilo web mientras el trabajo aguarda su turno.
         return await trabajo.Resultado.ConfigureAwait(false);
     }
 
