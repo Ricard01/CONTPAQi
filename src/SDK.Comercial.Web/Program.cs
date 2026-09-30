@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting.WindowsServices;
 using SDK.Comercial.Infrastructure;
-using SDK.Comercial.Web.Endpoints;
 using SDK.Comercial.Web.Errores;
+using SDK.Comercial.Web.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -29,7 +29,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapConexionEndpoints();
-app.MapEmpresasEndpoints();
+app.MapEndpoints(typeof(Program).Assembly);
 
 app.Run();
