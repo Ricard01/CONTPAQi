@@ -48,29 +48,31 @@ Clean architecture. Las dependencias apuntan hacia adentro: `Web → Infrastruct
 | `tests/SDK.Comercial.Infrastructure.Tests` | Pruebas (xUnit) de la cola y el hilo consumidor usando un SDK falso; no requieren la DLL. |
 
 Piezas clave en Infrastructure:
-- `Sdk/Native/ComercialSdkNative.cs`: declaraciones P/Invoke de `MGWServicios.dll`.
-- `Sdk/ComercialSdk.cs` (`IComercialSdk`): inicio/término del SDK y apertura/cierre de empresa.
+- `Sdk/Native/MgwServicios.*.cs`: declaraciones P/Invoke de `MGWServicios.dll`, organizadas por área mediante una clase parcial.
+- `Sdk/SesionComercialSdk.cs` (`ISesionComercialSdk`): inicio/término del SDK y apertura/cierre de empresa.
+- `Sdk/SdkResultado.cs`: traduce los códigos nativos y sus mensajes a excepciones de la aplicación.
 - `Sdk/Cola/SdkColaTrabajo.cs`: la cola (`EncolarAsync(contexto => ...)`), única puerta de entrada al SDK.
 - `Sdk/Cola/SdkWorker.cs`: `BackgroundService` que crea el hilo consumidor dedicado.
 - `Sdk/Cola/SdkContexto.cs`: estado dentro del hilo (`UsarEmpresa(ruta)` abre la empresa solo si cambió).
 - Cada repositorio (p. ej. `Empresas/EmpresaRepository.cs`) implementa un puerto de Application encolando su trabajo.
 
-Para agregar una operación nueva: definir el puerto en Application, implementarlo en Infrastructure con `cola.EncolarAsync(...)` llamando a `ComercialSdkNative` dentro de la lambda, registrarlo en `DependencyInjection.cs` y exponerlo con un endpoint en Web.
+Para agregar una operación nueva: definir el puerto en Application, implementarlo en Infrastructure con `cola.EncolarAsync(...)` llamando a `MgwServicios` dentro de la lambda, registrarlo en `DependencyInjection.cs` y exponerlo con un endpoint en Web.
 
 Reglas:
-- El P/Invoke vive en una clase `static` interna de Infrastructure (p. ej. `ComercialSdkNative`); ningún otro proyecto la ve.
+- El P/Invoke vive en la clase `static partial` interna `MgwServicios`; cada archivo agrupa un área del SDK y ningún otro proyecto la ve.
 - Los códigos de error del SDK se traducen a mensajes con `fError` dentro del hilo consumidor y se convierten a excepciones/resultados propios antes de salir de Infrastructure.
 - Las cadenas del SDK son ANSI con buffers de longitud fija; definir las constantes de longitud en un solo lugar.
 
 ## Notas del SDK
 
 - Antes de inicializar, el directorio actual del proceso debe ser el de instalación de Comercial (`Directory.SetCurrentDirectory`) para que la DLL encuentre sus dependencias; la ruta se toma de configuración (con respaldo en el registro de Windows de la instalación de Comercial).
-- Ciclo típico en el hilo consumidor: `fSetNombrePAQ` → `fAbreEmpresa` → operaciones → `fCierraEmpresa` → (al apagar) `fTerminaSDK`.
+- Ciclo típico en el hilo consumidor: `fInicioSesionSDK` → `fInicializaSDK` → `fAbreEmpresa` → operaciones → `fCierraEmpresa` → (al apagar) `fTerminaSDK`.
+- Comercial Premium es el sistema predeterminado de `fInicializaSDK`. `fSetNombrePAQ` es una alternativa para seleccionar Factura Electrónica y no forma parte del flujo de este proyecto.
 - El timbrado de documentos requiere licencia de 5 usuarios.
 
 ## Configuración
 
-- `appsettings.json` → sección `ComercialSdk` (ruta de instalación, nombre del sistema, empresa predeterminada, tamaño de la cola, etc.). La empresa predeterminada (`Empresa`) se abre al iniciar el SDK y la usa `SdkContexto.UsarEmpresa()` sin argumentos; `GET /api/conexion` la abre para comprobar la conexión.
+- `appsettings.json` → sección `ComercialSdk` (ruta de instalación, credenciales y empresa predeterminada). La empresa predeterminada (`RutaEmpresa`) se abre al iniciar el SDK y la usa `SdkContexto.UsarEmpresa()` sin argumentos; `GET /api/conexion` la abre para comprobar la conexión.
 - Credenciales (usuario/contraseña de Comercial, contraseña de CSD) **nunca** en el repositorio: usar user-secrets en desarrollo y variables de entorno o configuración del servidor en producción.
 
 ## Convenciones de build
@@ -93,5 +95,4 @@ sc.exe create "CONTPAQi.SDK.Comercial" binPath= "C:\ruta\publicada\SDK.Comercial
 
 ## Limitaciones del entorno
 
-- El SDK es una DLL nativa de Windows y requiere Comercial Premium instalado y licenciado. En Linux o en entornos de CI sin Comercial solo se puede compilar y probar la lógica que no toca el SDK; las pruebas contra el SDK real se hacen en la máquina Windows del usuario.
-- Diseñar el código para que el acceso al SDK esté detrás de interfaces y así poder probar Application y la cola sin la DLL.
+- El SDK es una DLL nativa de Windows y requiere Comercial Premium instalado y licenciado.

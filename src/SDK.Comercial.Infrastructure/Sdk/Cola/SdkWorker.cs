@@ -11,7 +11,7 @@ namespace SDK.Comercial.Infrastructure.Sdk.Cola;
 /// </summary>
 internal sealed class SdkWorker(
     SdkColaTrabajo cola,
-    IComercialSdk sdk,
+    ISesionComercialSdk sdk,
     IOptions<ComercialSdkOptions> opciones,
     ILogger<SdkWorker> logger) : BackgroundService
 {

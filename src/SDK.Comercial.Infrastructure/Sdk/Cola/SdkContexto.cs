@@ -6,7 +6,7 @@ namespace SDK.Comercial.Infrastructure.Sdk.Cola;
 /// Estado compartido por las operaciones encoladas. Solo existe dentro del hilo consumidor y
 /// garantiza que como máximo haya una empresa abierta en el SDK global.
 /// </summary>
-internal sealed class SdkContexto(IComercialSdk sdk, string? empresaPredeterminada = null)
+internal sealed class SdkContexto(ISesionComercialSdk sdk, string? empresaPredeterminada = null)
 {
     public string? EmpresaAbierta { get; private set; }
 
@@ -19,7 +19,7 @@ internal sealed class SdkContexto(IComercialSdk sdk, string? empresaPredetermina
         if (string.IsNullOrWhiteSpace(empresaPredeterminada))
         {
             throw new ComercialSdkException(
-                $"No se indicó empresa y no hay una predeterminada. Configura {ComercialSdkOptions.Seccion}:Empresa.");
+                $"No se indicó empresa y no hay una predeterminada. Configura {ComercialSdkOptions.Seccion}:RutaEmpresa.");
         }
 
         UsarEmpresa(empresaPredeterminada);

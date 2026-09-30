@@ -9,8 +9,8 @@ namespace SDK.Comercial.Infrastructure.Tests;
 
 public sealed class SdkColaTrabajoTests : IAsyncLifetime
 {
-    private readonly FakeComercialSdk _sdk = new();
-    private readonly SdkColaTrabajo _cola = new(Options.Create(new ComercialSdkOptions { CapacidadCola = 10 }));
+    private readonly FakeSesionComercialSdk _sdk = new();
+    private readonly SdkColaTrabajo _cola = new();
     private readonly SdkWorker _worker;
 
     public SdkColaTrabajoTests()
@@ -92,8 +92,8 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
     [Fact]
     public async Task Si_el_SDK_no_inicia_las_operaciones_fallan_con_ComercialSdkException()
     {
-        var sdk = new FakeComercialSdk { ErrorAlIniciar = new InvalidOperationException("sin licencia") };
-        var cola = new SdkColaTrabajo(Options.Create(new ComercialSdkOptions()));
+        var sdk = new FakeSesionComercialSdk { ErrorAlIniciar = new InvalidOperationException("sin licencia") };
+        var cola = new SdkColaTrabajo();
         using var worker = new SdkWorker(cola, sdk, Options.Create(new ComercialSdkOptions()), NullLogger<SdkWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);
 
@@ -106,9 +106,9 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
     [Fact]
     public async Task Abre_la_empresa_predeterminada_al_iniciar_y_la_cierra_al_terminar()
     {
-        var sdk = new FakeComercialSdk();
+        var sdk = new FakeSesionComercialSdk();
         var opciones = Options.Create(new ComercialSdkOptions { RutaEmpresa = @"C:\Empresas\A" });
-        var cola = new SdkColaTrabajo(opciones);
+        var cola = new SdkColaTrabajo();
         using var worker = new SdkWorker(cola, sdk, opciones, NullLogger<SdkWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);
 
@@ -122,9 +122,9 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
     [Fact]
     public async Task Si_la_empresa_predeterminada_no_abre_al_iniciar_se_reintenta_en_la_siguiente_operacion()
     {
-        var sdk = new FakeComercialSdk { FallosAlAbrir = 1 };
+        var sdk = new FakeSesionComercialSdk { FallosAlAbrir = 1 };
         var opciones = Options.Create(new ComercialSdkOptions { RutaEmpresa = @"C:\Empresas\A" });
-        var cola = new SdkColaTrabajo(opciones);
+        var cola = new SdkColaTrabajo();
         using var worker = new SdkWorker(cola, sdk, opciones, NullLogger<SdkWorker>.Instance);
         await worker.StartAsync(CancellationToken.None);
 
@@ -149,11 +149,11 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
     {
         var error = await Assert.ThrowsAsync<ComercialSdkException>(() => new ConexionComercial(_cola).VerificarAsync());
 
-        Assert.Contains("ComercialSdk:Empresa", error.Message);
+        Assert.Contains("ComercialSdk:RutaEmpresa", error.Message);
         Assert.Empty(_sdk.Llamadas);
     }
 
-    private sealed class FakeComercialSdk : IComercialSdk
+    private sealed class FakeSesionComercialSdk : ISesionComercialSdk
     {
         public Exception? ErrorAlIniciar { get; init; }
 

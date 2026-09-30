@@ -1,16 +1,20 @@
 using System.Threading.Channels;
-using Microsoft.Extensions.Options;
 using SDK.Comercial.Application.Common.Exceptions;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Cola;
 
 /// <summary>
-/// Cola por la que pasan todas las operaciones al SDK. Un único hilo (<see cref="SdkWorker"/>) las consume en orden.
+/// Cola acotada por la que pasan todas las operaciones al SDK. Un único hilo
+/// (<see cref="SdkWorker"/>) las consume en orden, por lo que nunca hay llamadas nativas concurrentes.
 /// </summary>
-internal sealed class SdkColaTrabajo(IOptions<ComercialSdkOptions> opciones)
+internal sealed class SdkColaTrabajo
 {
+    // Limita los trabajos almacenados dentro del canal. Al alcanzar este número, WriteAsync
+    // espera espacio sin bloquear un hilo; no aumenta ni reduce la concurrencia del SDK, que es uno.
+    private const int Capacidad = 100;
+
     private readonly Channel<SdkTrabajo> _canal = Channel.CreateBounded<SdkTrabajo>(
-        new BoundedChannelOptions(opciones.Value.CapacidadCola)
+        new BoundedChannelOptions(Capacidad)
         {
             SingleReader = true,
             FullMode = BoundedChannelFullMode.Wait,

@@ -6,10 +6,17 @@ using SDK.Comercial.Infrastructure.Sdk.Native;
 
 namespace SDK.Comercial.Infrastructure.Sdk;
 
-internal sealed class ComercialSdk(IOptions<ComercialSdkOptions> opciones, ILogger<ComercialSdk> logger) : IComercialSdk
+/// <summary>
+/// Adapta el ciclo de vida de MGWServicios.dll a una sesión de CONTPAQi Comercial.
+/// Todas sus operaciones se invocan desde el hilo exclusivo de <see cref="Cola.SdkWorker"/>.
+/// </summary>
+internal sealed class SesionComercialSdk(
+    IOptions<ComercialSdkOptions> opciones,
+    ILogger<SesionComercialSdk> logger) : ISesionComercialSdk
 {
     private const string LlaveRegistro = @"SOFTWARE\Computación en Acción, SA CV\CONTPAQ I COMERCIAL";
 
+    /// <inheritdoc />
     public void Iniciar()
     {
         var o = opciones.Value;
@@ -33,18 +40,23 @@ internal sealed class ComercialSdk(IOptions<ComercialSdkOptions> opciones, ILogg
         logger.LogInformation("Iniciando SDK de CONTPAQi desde {Ruta}", ruta);
 
         // El orden es intencional: primero se proporcionan las credenciales para evitar que un
-        // servicio de Windows intente mostrar el diálogo de inicio de sesión; después
-        // fSetNombrePAQ inicializa la conexión con CONTPAQi Comercial y devuelve el error, si existe.
+        // servicio de Windows intente mostrar el diálogo de inicio de sesión; después se llama a
+        // fInicializaSDK, que es la inicialización obligatoria y predeterminada para Comercial Premium.
+        // fSetNombrePAQ no se usa: el manual lo reserva como alternativa a fInicializaSDK cuando se
+        // desea conectar con Factura Electrónica.
         // La licencia no se envía por esta API: la valida la instalación local de CONTPAQi.
-        ComercialSdkNative.fInicioSesionSDK(o.Usuario, o.Contrasena ?? string.Empty);
-        SdkErrores.Verificar(ComercialSdkNative.fSetNombrePAQ(o.NombrePaq));
+        MgwServicios.fInicioSesionSDK(o.Usuario, o.Contrasena ?? string.Empty);
+        SdkResultado.Verificar(MgwServicios.fInicializaSDK());
     }
 
-    public void Terminar() => ComercialSdkNative.fTerminaSDK();
+    /// <inheritdoc />
+    public void Terminar() => MgwServicios.fTerminaSDK();
 
-    public void AbrirEmpresa(string ruta) => SdkErrores.Verificar(ComercialSdkNative.fAbreEmpresa(ruta));
+    /// <inheritdoc />
+    public void AbrirEmpresa(string ruta) => SdkResultado.Verificar(MgwServicios.fAbreEmpresa(ruta));
 
-    public void CerrarEmpresa() => ComercialSdkNative.fCierraEmpresa();
+    /// <inheritdoc />
+    public void CerrarEmpresa() => MgwServicios.fCierraEmpresa();
 
     private static string? LeerRutaDelRegistro()
     {
