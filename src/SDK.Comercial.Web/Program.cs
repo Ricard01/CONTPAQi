@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting.WindowsServices;
 using SDK.Comercial.Infrastructure;
-using SDK.Comercial.Web.Errores;
 using SDK.Comercial.Web.Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -14,7 +14,7 @@ builder.Services.AddWindowsService(options => options.ServiceName = "CONTPAQi.SD
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
-builder.Services.AddExceptionHandler<ComercialSdkExceptionHandler>();
+builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
