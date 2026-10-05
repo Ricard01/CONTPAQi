@@ -6,7 +6,7 @@ public sealed class ComercialSdkOptions
     public const string Seccion = "ComercialSdk";
 
     /// <summary>
-    /// Carpeta de instalación de Comercial Premium (donde está MGWServicios.dll).
+    /// Ruta de la carpeta de instalación de Comercial Premium (donde está MGWServicios.dll).
     /// Si se deja vacía se lee del registro de Windows.
     /// </summary>
     public string? RutaInstalacion { get; set; }

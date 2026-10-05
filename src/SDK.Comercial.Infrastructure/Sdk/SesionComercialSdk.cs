@@ -20,13 +20,9 @@ internal sealed class SesionComercialSdk(
     public void Iniciar()
     {
         var o = opciones.Value;
-        if (string.IsNullOrWhiteSpace(o.Usuario))
-        {
-            throw new ComercialSdkException($"Falta configurar {ComercialSdkOptions.Seccion}:Usuario.");
-        }
-
+        
         // Se acepta una ruta explícita para instalaciones especiales; normalmente se obtiene
-        // DirectorioBase del registro de Windows de 32 bits donde CONTPAQi instala el SDK.
+        // del registro de Windows de 32 bits donde CONTPAQi instala el SDK.
         var ruta = !string.IsNullOrWhiteSpace(o.RutaInstalacion) ? o.RutaInstalacion : LeerRutaDelRegistro();
         if (string.IsNullOrWhiteSpace(ruta))
         {
@@ -38,13 +34,17 @@ internal sealed class SesionComercialSdk(
         // global para el proceso, por eso el resto de la aplicación no debe depender de rutas relativas.
         Directory.SetCurrentDirectory(ruta);
         logger.LogInformation("Iniciando SDK de CONTPAQi desde {Ruta}", ruta);
+        
+        if (string.IsNullOrWhiteSpace(o.Usuario))
+        {
+            throw new ComercialSdkException($"Falta configurar {ComercialSdkOptions.Seccion}:Usuario.");
+        }
 
         // El orden es intencional: primero se proporcionan las credenciales para evitar que un
         // servicio de Windows intente mostrar el diálogo de inicio de sesión; después se llama a
         // fInicializaSDK, que es la inicialización obligatoria y predeterminada para Comercial Premium.
         // fSetNombrePAQ no se usa: el manual lo reserva como alternativa a fInicializaSDK cuando se
         // desea conectar con Factura Electrónica.
-        // La licencia no se envía por esta API: la valida la instalación local de CONTPAQi.
         MgwServicios.fInicioSesionSDK(o.Usuario, o.Contrasena ?? string.Empty);
         SdkResultado.Verificar(MgwServicios.fInicializaSDK());
     }

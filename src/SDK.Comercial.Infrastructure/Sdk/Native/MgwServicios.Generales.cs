@@ -14,12 +14,11 @@ internal static partial class MgwServicios
     /// CONTPAQi Comercial Premium®.
     /// </summary>
     /// <returns>
-    /// <c>0</c> si la inicialización se realizó correctamente; cualquier otro valor es un código
-    /// de error que puede consultarse mediante <see cref="fError"/>.
+    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
+    /// del SDK que puede consultarse mediante <see cref="fError"/>.
     /// </returns>
     /// <remarks>
-    /// El manual indica que no recibe parámetros y que debe llamarse obligatoriamente al inicio
-    /// de toda aplicación que utilice el SDK de Comercial Premium.
+    /// Debe llamarse obligatoriamente al inicio de toda aplicación que utilice el SDK de Comercial Premium.
     /// </remarks>
     [DllImport(Dll)]
     internal static extern int fInicializaSDK();
@@ -34,7 +33,25 @@ internal static partial class MgwServicios
     internal static extern void fInicioSesionSDK(string aUsuario, string aContrasenia);
 
     /// <summary>
-    /// Libera todos los recursos solicitados por el SDK y termina la sesión global.
+    /// Esta función define el sistema al que se conectará el SDK.
+    /// Sino se usa esta función la conexión por omisión será al sistema CONTPAQi Comercial Premium®
+    /// </summary>
+    /// <param name="aSistema">
+    /// Nombre del sistema al que se conectará el SDK.
+    /// </param>
+    /// <returns>
+    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
+    /// del SDK que puede consultarse mediante <see cref="fError"/>.
+    /// </returns>
+    /// <remarks>
+    /// Si se desea establecer una conexión a CONTPAQi Factura Electrónica® el parámetro aSistema deberá ser "CONTPAQ I Facturacion" y se deberá utilizar en vez de la función fInicializaSDK().
+    /// </remarks>
+    [DllImport(Dll, CharSet = CharSet.Ansi)]
+    internal static extern int fSetNombrePAQ(string aSistema);
+
+
+    /// <summary>
+    /// Libera todos los recursos solicitados por el SDK, se requiere llamar al terminar de utilizar el SDK
     /// </summary>
     /// <remarks>
     /// No recibe parámetros ni devuelve un resultado. Debe llamarse al terminar de utilizar el
@@ -44,12 +61,14 @@ internal static partial class MgwServicios
     internal static extern void fTerminaSDK();
 
     /// <summary>
-    /// Recupera la descripción correspondiente a un código de error devuelto por el SDK.
+    /// Esta función recupera el mensaje de error del SDK.
     /// </summary>
-    /// <param name="aNumError">Código de error que se desea consultar.</param>
-    /// <param name="aMensaje">Buffer en el que la función escribe la descripción del error.</param>
-    /// <param name="aLen">Longitud disponible en <paramref name="aMensaje"/>.</param>
-    /// <remarks>La función no devuelve un valor; el mensaje se recibe mediante <paramref name="aMensaje"/>.</remarks>
+    /// <param name="aNumError">Número del error.</param>
+    /// <param name="aMensaje">Descripción del error.</param>
+    /// <param name="aLen">Longitud del mensaje de error.</param>
+    /// <returns>
+    /// <paramref name="aMensaje"/>: Al finalizar la función este parámetro contiene el mensaje de error correspondiente al número de error especificado en aNumError. 
+    /// </returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
     internal static extern void fError(int aNumError, StringBuilder aMensaje, int aLen);
 }
