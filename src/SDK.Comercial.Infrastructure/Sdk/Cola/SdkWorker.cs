@@ -6,14 +6,9 @@ using SDK.Comercial.Application.Common.Exceptions;
 namespace SDK.Comercial.Infrastructure.Sdk.Cola;
 
 /// <summary>
-/// Hilo consumidor único: inicia el SDK, abre la empresa predeterminada, ejecuta los trabajos de la cola uno por uno
-/// y termina el SDK al detenerse.
+/// Hilo consumidor único: inicia el SDK, abre la empresa predeterminada, ejecuta los trabajos de la cola uno por uno y termina el SDK al detenerse.
 /// </summary>
-internal sealed class SdkWorker(
-    SdkColaTrabajo cola,
-    ISesionComercialSdk sdk,
-    IOptions<ComercialSdkOptions> opciones,
-    ILogger<SdkWorker> logger) : BackgroundService
+internal sealed class SdkWorker(SdkColaTrabajo cola, ISesionComercialSdk sdk, IOptions<ComercialSdkOptions> opciones, ILogger<SdkWorker> logger) : BackgroundService
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {

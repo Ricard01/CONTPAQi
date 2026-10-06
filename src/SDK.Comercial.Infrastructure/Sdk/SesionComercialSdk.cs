@@ -46,7 +46,7 @@ internal sealed class SesionComercialSdk(
         // fSetNombrePAQ no se usa: el manual lo reserva como alternativa a fInicializaSDK cuando se
         // desea conectar con Factura Electrónica.
         MgwServicios.fInicioSesionSDK(o.Usuario, o.Contrasena ?? string.Empty);
-        SdkResultado.Verificar(MgwServicios.fInicializaSDK());
+        // Al parecer no lo necesito segun ejemplos  SdkResultado.Verificar(MgwServicios.fInicializaSDK());
     }
 
     /// <inheritdoc />

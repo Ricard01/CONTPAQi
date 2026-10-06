@@ -29,15 +29,12 @@ public static class DependencyInjection
         // permitiría sesiones concurrentes sobre un SDK que mantiene estado global.
         services.AddSingleton<ISesionComercialSdk, SesionComercialSdk>();
         services.AddSingleton<SdkColaTrabajo>();
-
+        services.AddSingleton<IConexionComercial, ConexionComercial>();
+        services.AddSingleton<IEmpresaRepository, EmpresaRepository>();
+        
         // ASP.NET Core inicia este BackgroundService automáticamente al arrancar la aplicación
         // y solicita su detención al apagarla. El worker es dueño del hilo exclusivo del SDK.
         services.AddHostedService<SdkWorker>();
-
-        // Los endpoints reciben estas interfaces; sus implementaciones no llaman al SDK desde
-        // el hilo HTTP, sino que colocan el trabajo en SdkColaTrabajo.
-        services.AddSingleton<IConexionComercial, ConexionComercial>();
-        services.AddSingleton<IEmpresaRepository, EmpresaRepository>();
 
         return services;
     }
