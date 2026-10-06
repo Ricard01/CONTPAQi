@@ -14,6 +14,7 @@
     <Project Path="src/SDK.Comercial.Web/SDK.Comercial.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/SDK.Comercial.Infrastructure.IntegrationTests/SDK.Comercial.Infrastructure.IntegrationTests.csproj" />
     <Project Path="tests/SDK.Comercial.Infrastructure.Tests/SDK.Comercial.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>

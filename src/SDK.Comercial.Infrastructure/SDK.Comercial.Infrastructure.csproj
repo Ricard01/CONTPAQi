@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <InternalsVisibleTo Include="SDK.Comercial.Infrastructure.Tests" />
+      <InternalsVisibleTo Include="SDK.Comercial.Infrastructure.IntegrationTests" />
     </ItemGroup>
 
 </Project>

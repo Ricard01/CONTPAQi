@@ -45,7 +45,8 @@ Clean architecture. Las dependencias apuntan hacia adentro: `Web → Infrastruct
 | `src/SDK.Comercial.Application` | Casos de uso, DTOs, interfaces (puertos) como el ejecutor de operaciones del SDK y los repositorios/servicios de CONTPAQi. No conoce el SDK nativo. |
 | `src/SDK.Comercial.Infrastructure` | Interop con `MGWServicios.dll` (P/Invoke), la cola de Channels con su hilo consumidor, implementación de los puertos, lectura de configuración del SDK. **Único lugar donde existe código nativo.** |
 | `src/SDK.Comercial.Web` | Host ASP.NET Core: endpoints, registro de dependencias, configuración como Servicio de Windows, manejo global de errores (ProblemDetails), OpenAPI. |
-| `tests/SDK.Comercial.Infrastructure.Tests` | Pruebas (xUnit) de la cola y el hilo consumidor usando un SDK falso; no requieren la DLL. |
+| `tests/SDK.Comercial.Infrastructure.Tests` | Pruebas (xUnit) de la cola, el hilo consumidor y los repositorios usando un SDK falso (`Fakes/`); no requieren la DLL ni escriben en Comercial. |
+| `tests/SDK.Comercial.Infrastructure.IntegrationTests` | Pruebas x86 contra el SDK real: escriben en una empresa de pruebas y limpian al terminar. Se omiten salvo en Windows x86 con `COMERCIAL_PRUEBAS_INTEGRACION=1` y las variables descritas en `ConfiguracionIntegracion.cs`. |
 
 Piezas clave en Infrastructure:
 - `Sdk/Native/MgwServicios.*.cs`: declaraciones P/Invoke de `MGWServicios.dll`, organizadas por área mediante una clase parcial.
@@ -55,6 +56,7 @@ Piezas clave en Infrastructure:
 - `Sdk/Cola/SdkWorker.cs`: `BackgroundService` que crea el hilo consumidor dedicado.
 - `Sdk/Cola/SdkContexto.cs`: estado dentro del hilo (`UsarEmpresa(ruta)` abre la empresa solo si cambió).
 - Cada repositorio (p. ej. `Empresas/EmpresaRepository.cs`) implementa un puerto de Application encolando su trabajo.
+- `Sdk/IDocumentosSdk.cs` (`DocumentosSdk`): funciones nativas de documentos/movimientos detrás de una interfaz para que repositorios como `Facturas/FacturaRepository.cs` se prueben con un SDK falso.
 
 Para agregar una operación nueva: definir el puerto en Application, implementarlo en Infrastructure con `cola.EncolarAsync(...)` llamando a `MgwServicios` dentro de la lambda, registrarlo en `DependencyInjection.cs` y exponerlo con un endpoint en Web.
 

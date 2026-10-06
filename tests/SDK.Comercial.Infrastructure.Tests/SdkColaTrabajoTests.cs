@@ -4,6 +4,7 @@ using SDK.Comercial.Application.Common.Exceptions;
 using SDK.Comercial.Infrastructure.Conexion;
 using SDK.Comercial.Infrastructure.Sdk;
 using SDK.Comercial.Infrastructure.Sdk.Cola;
+using SDK.Comercial.Infrastructure.Tests.Fakes;
 
 namespace SDK.Comercial.Infrastructure.Tests;
 
@@ -151,39 +152,5 @@ public sealed class SdkColaTrabajoTests : IAsyncLifetime
 
         Assert.Contains("ComercialSdk:RutaEmpresa", error.Message);
         Assert.Empty(_sdk.Llamadas);
-    }
-
-    private sealed class FakeSesionComercialSdk : ISesionComercialSdk
-    {
-        public Exception? ErrorAlIniciar { get; init; }
-
-        public int FallosAlAbrir { get; set; }
-
-        public int HiloInicio { get; private set; }
-
-        public List<string> Llamadas { get; } = [];
-
-        public void Iniciar()
-        {
-            HiloInicio = Environment.CurrentManagedThreadId;
-            if (ErrorAlIniciar is not null)
-            {
-                throw ErrorAlIniciar;
-            }
-        }
-
-        public void Terminar() => Llamadas.Add("terminar");
-
-        public void AbrirEmpresa(string ruta)
-        {
-            Llamadas.Add($"abrir {ruta}");
-            if (FallosAlAbrir > 0)
-            {
-                FallosAlAbrir--;
-                throw new ComercialSdkException(1, "Empresa no encontrada");
-            }
-        }
-
-        public void CerrarEmpresa() => Llamadas.Add("cerrar");
     }
 }
