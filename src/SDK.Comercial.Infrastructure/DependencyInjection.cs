@@ -2,8 +2,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SDK.Comercial.Application.Conexion;
 using SDK.Comercial.Application.Empresas;
+using SDK.Comercial.Application.Facturas;
 using SDK.Comercial.Infrastructure.Conexion;
 using SDK.Comercial.Infrastructure.Empresas;
+using SDK.Comercial.Infrastructure.Facturas;
 using SDK.Comercial.Infrastructure.Sdk;
 using SDK.Comercial.Infrastructure.Sdk.Cola;
 
@@ -29,6 +31,7 @@ public static class DependencyInjection
         // permitiría sesiones concurrentes sobre un SDK que mantiene estado global.
         services.AddSingleton<ISesionComercialSdk, SesionComercialSdk>();
         services.AddSingleton<SdkColaTrabajo>();
+        services.AddSingleton<IDocumentosSdk, DocumentosSdk>();
 
         // ASP.NET Core inicia este BackgroundService automáticamente al arrancar la aplicación
         // y solicita su detención al apagarla. El worker es dueño del hilo exclusivo del SDK.
@@ -38,6 +41,7 @@ public static class DependencyInjection
         // el hilo HTTP, sino que colocan el trabajo en SdkColaTrabajo.
         services.AddSingleton<IConexionComercial, ConexionComercial>();
         services.AddSingleton<IEmpresaRepository, EmpresaRepository>();
+        services.AddSingleton<IFacturaRepository, FacturaRepository>();
 
         return services;
     }
