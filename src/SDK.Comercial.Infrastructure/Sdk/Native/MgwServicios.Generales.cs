@@ -14,8 +14,7 @@ internal static partial class MgwServicios
     /// CONTPAQi Comercial Premium®.
     /// </summary>
     /// <returns>
-    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
-    /// del SDK que puede consultarse mediante <see cref="fError"/>.
+    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     /// </returns>
     /// <remarks>
     /// Debe llamarse obligatoriamente al inicio de toda aplicación que utilice el SDK de Comercial Premium.
@@ -40,8 +39,7 @@ internal static partial class MgwServicios
     /// Nombre del sistema al que se conectará el SDK.
     /// </param>
     /// <returns>
-    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
-    /// del SDK que puede consultarse mediante <see cref="fError"/>.
+    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     /// </returns>
     /// <remarks>
     /// Si se desea establecer una conexión a CONTPAQi Factura Electrónica® el parámetro aSistema deberá ser "CONTPAQ I Facturacion" y se deberá utilizar en vez de la función fInicializaSDK().

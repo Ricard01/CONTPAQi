@@ -16,8 +16,7 @@ internal static partial class MgwServicios
     /// <param name="aNombreEmpresa">Recibe el nombre de la primera empresa.</param>
     /// <param name="aDirectorioEmpresa">Recibe el directorio de la primera empresa.</param>
     /// <returns>
-    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
-    /// del SDK que puede consultarse mediante <see cref="fError"/>.
+   /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     /// </returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
     internal static extern int fPosPrimerEmpresa(ref int aIdEmpresa, StringBuilder aNombreEmpresa,
@@ -30,8 +29,7 @@ internal static partial class MgwServicios
     /// <param name="aNombreEmpresa">Recibe el nombre de la siguiente empresa.</param>
     /// <param name="aDirectorioEmpresa">Recibe el directorio de la siguiente empresa.</param>
     /// <returns>
-    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
-    /// del SDK que puede consultarse mediante <see cref="fError"/>.
+   /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     /// </returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
     internal static extern int fPosSiguienteEmpresa(ref int aIdEmpresa, StringBuilder aNombreEmpresa,
@@ -46,8 +44,7 @@ internal static partial class MgwServicios
     /// <c>C:\Compac\Empresas\AdEmpresaEjemplo</c>.
     /// </param>
     /// <returns>
-    /// <c>0</c> la operación fue realizada con éxito; cualquier otro valor es un código de error
-    /// del SDK que puede consultarse mediante <see cref="fError"/>.
+   /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     /// </returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
     internal static extern int fAbreEmpresa(string aDirectorioEmpresa);
