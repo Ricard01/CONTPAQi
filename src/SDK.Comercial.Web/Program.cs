@@ -15,8 +15,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 
-// Registra configuración, SDK nativo, cola, worker y repositorios. Al construir/iniciar el host,
-// ASP.NET Core crea SdkWorker automáticamente y comienza el ciclo de vida del SDK.
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
