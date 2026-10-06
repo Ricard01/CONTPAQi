@@ -1,14 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native;
 
-/// <summary>Funciones nativas de CONTPAQi Comercial Premium para crear, consultar y modificar movimientos.</summary>
-[SuppressMessage("Interoperability", "SYSLIB1054:Use LibraryImportAttribute en lugar de DllImportAttribute")]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("Globalization", "CA2101:Especificar cálculo de referencias para argumentos de cadena P/Invoke")]
+// FUNCIONES PARA CREAR, CONSULTAR Y MODIFICAR MOVIMIENTOS.
 internal static partial class MgwServicios
 {
     #region Bajo nivel – Lectura/Escritura

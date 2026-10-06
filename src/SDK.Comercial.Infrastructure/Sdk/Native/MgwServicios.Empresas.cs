@@ -3,9 +3,9 @@ using System.Text;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native;
 
-/// <summary>
-/// Funciones nativas relacionadas con la apertura, cierre y enumeración de empresas.
-/// </summary>
+
+// FUNCIONES RELACIONADAS CON LA APERTURA, CIERRE Y NAVEGACION DE EMPRESAS.
+
 internal static partial class MgwServicios
 {
     /// <summary>
@@ -32,8 +32,7 @@ internal static partial class MgwServicios
    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     /// </returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
-    internal static extern int fPosSiguienteEmpresa(ref int aIdEmpresa, StringBuilder aNombreEmpresa,
-        StringBuilder aDirectorioEmpresa);
+    internal static extern int fPosSiguienteEmpresa(ref int aIdEmpresa, StringBuilder aNombreEmpresa, StringBuilder aDirectorioEmpresa);
 
     /// <summary>
     /// Abre la empresa ubicada en el directorio indicado y la establece como la empresa activa

@@ -3,10 +3,7 @@ using System.Text;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native;
 
-/// <summary>
-/// Funciones generales para autenticación, inicialización, terminación y lectura de errores.
-/// Deben ejecutarse desde el hilo exclusivo del SDK y respetando el orden definido por SesionComercialSdk.
-/// </summary>
+// FUNCIONES GENERALES PARA AUTENTICACIÓN, INICIALIZACIÓN, TERMINACIÓN Y LECTURA DE ERRORES.
 internal static partial class MgwServicios
 {
     /// <summary>

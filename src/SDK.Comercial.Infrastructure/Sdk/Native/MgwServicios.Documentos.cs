@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
@@ -6,12 +5,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native;
 
-/// <summary>
-/// Funciones nativas de CONTPAQi Comercial Premium para buscar, recorrer, leer y modificar documentos. 
-/// </summary>
-[SuppressMessage("Interoperability", "SYSLIB1054:Use “LibraryImportAttribute” en lugar de “DllImportAttribute” para generar código de serialización P/Invoke en el tiempo de compilación")]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("Globalization", "CA2101:Especificar cálculo de referencias para argumentos de cadena P/Invoke")]
+// FUNCIONES PARA BUSCAR, RECORRER, LEER Y MODIFICAR DOCUMENTOS. 
 internal static partial class MgwServicios
 {
     #region Bajo nivel – Lectura/Escritura
