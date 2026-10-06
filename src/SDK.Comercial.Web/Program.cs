@@ -5,7 +5,6 @@ using SDK.Comercial.Web.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    Args = args,
     // Como servicio el directorio actual es System32; appsettings.json se busca junto al ejecutable.
     ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : default,
 });
@@ -16,8 +15,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 
-// Registra configuración, SDK nativo, cola, worker y repositorios. Al construir/iniciar el host,
-// ASP.NET Core crea SdkWorker automáticamente y comienza el ciclo de vida del SDK.
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();

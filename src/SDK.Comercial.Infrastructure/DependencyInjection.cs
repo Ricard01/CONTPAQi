@@ -13,6 +13,13 @@ namespace SDK.Comercial.Infrastructure;
 
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registra los servicios de infraestructura que la aplicación necesita para trabajar con el SDK de CONTPAQi Comercial.
+    /// </summary>
+    /// <param name="services">Contenedor donde se registran los servicios.</param>
+    /// <param name="configuration">Configuración de la aplicación, incluida la sección ComercialSdk.</param>
+    /// <returns>El mismo contenedor de servicios para permitir encadenar registros.</returns>
+    /// <remarks>Agrega la configuración, la sesión y la cola del SDK, el worker en segundo plano y los componentes de conexión y acceso a empresas al contenedor de servicios.</remarks>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Convierte la sección "ComercialSdk" de appsettings y de las demás fuentes de
@@ -32,16 +39,12 @@ public static class DependencyInjection
         services.AddSingleton<ISesionComercialSdk, SesionComercialSdk>();
         services.AddSingleton<SdkColaTrabajo>();
         services.AddSingleton<IDocumentosSdk, DocumentosSdk>();
-
-        // ASP.NET Core inicia este BackgroundService automáticamente al arrancar la aplicación
-        // y solicita su detención al apagarla. El worker es dueño del hilo exclusivo del SDK.
-        services.AddHostedService<SdkWorker>();
-
-        // Los endpoints reciben estas interfaces; sus implementaciones no llaman al SDK desde
-        // el hilo HTTP, sino que colocan el trabajo en SdkColaTrabajo.
         services.AddSingleton<IConexionComercial, ConexionComercial>();
         services.AddSingleton<IEmpresaRepository, EmpresaRepository>();
         services.AddSingleton<IFacturaRepository, FacturaRepository>();
+
+        // NET Core inicia este BackgroundService automáticamente al arrancar la aplicación y solicita su detención al apagarla. El worker es dueño del hilo exclusivo del SDK.
+        services.AddHostedService<SdkWorker>();
 
         return services;
     }
