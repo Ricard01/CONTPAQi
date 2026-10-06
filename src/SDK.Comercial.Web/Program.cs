@@ -5,7 +5,6 @@ using SDK.Comercial.Web.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    Args = args,
     // Como servicio el directorio actual es System32; appsettings.json se busca junto al ejecutable.
     ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : default,
 });

@@ -10,8 +10,7 @@ namespace SDK.Comercial.Infrastructure.Sdk;
 /// Adapta el ciclo de vida de MGWServicios.dll a una sesión de CONTPAQi Comercial.
 /// Todas sus operaciones se invocan desde el hilo exclusivo de <see cref="Cola.SdkWorker"/>.
 /// </summary>
-internal sealed class SesionComercialSdk(
-    IOptions<ComercialSdkOptions> opciones,
+internal sealed class SesionComercialSdk(IOptions<ComercialSdkOptions> opciones,
     ILogger<SesionComercialSdk> logger) : ISesionComercialSdk
 {
     private const string LlaveRegistro = @"SOFTWARE\Computación en Acción, SA CV\CONTPAQ I COMERCIAL";
@@ -19,25 +18,23 @@ internal sealed class SesionComercialSdk(
     /// <inheritdoc />
     public void Iniciar()
     {
-        var o = opciones.Value;
+        var opt = opciones.Value;
         
-        // Se acepta una ruta explícita para instalaciones especiales; normalmente se obtiene
-        // del registro de Windows de 32 bits donde CONTPAQi instala el SDK.
-        var ruta = !string.IsNullOrWhiteSpace(o.RutaInstalacion) ? o.RutaInstalacion : LeerRutaDelRegistro();
+
+        var ruta = !string.IsNullOrWhiteSpace(opt.RutaInstalacion) ? opt.RutaInstalacion : LeerRutaDelRegistro();
         if (string.IsNullOrWhiteSpace(ruta))
         {
             throw new ComercialSdkException(
                 $"No se encontró la ruta de instalación de Comercial. Configura {ComercialSdkOptions.Seccion}:RutaInstalacion.");
         }
 
-        // MGWServicios.dll resuelve sus dependencias desde el directorio actual. Este cambio es
-        // global para el proceso, por eso el resto de la aplicación no debe depender de rutas relativas.
+        // MGWServicios.dll resuelve sus dependencias desde el directorio actual. 
         Directory.SetCurrentDirectory(ruta);
         logger.LogInformation("Iniciando SDK de CONTPAQi desde {Ruta}", ruta);
         
-        if (string.IsNullOrWhiteSpace(o.Usuario))
+        if (string.IsNullOrWhiteSpace(opt.Usuario))
         {
-            throw new ComercialSdkException($"Falta configurar {ComercialSdkOptions.Seccion}:Usuario.");
+            throw new ComercialSdkException($"Falta definir {ComercialSdkOptions.Seccion}:Usuario.");
         }
 
         // El orden es intencional: primero se proporcionan las credenciales para evitar que un
@@ -45,7 +42,7 @@ internal sealed class SesionComercialSdk(
         // fInicializaSDK, que es la inicialización obligatoria y predeterminada para Comercial Premium.
         // fSetNombrePAQ no se usa: el manual lo reserva como alternativa a fInicializaSDK cuando se
         // desea conectar con Factura Electrónica.
-        MgwServicios.fInicioSesionSDK(o.Usuario, o.Contrasena ?? string.Empty);
+        MgwServicios.fInicioSesionSDK(opt.Usuario, opt.Contrasena ?? string.Empty);
         // Al parecer no lo necesito segun ejemplos  SdkResultado.Verificar(MgwServicios.fInicializaSDK());
     }
 
