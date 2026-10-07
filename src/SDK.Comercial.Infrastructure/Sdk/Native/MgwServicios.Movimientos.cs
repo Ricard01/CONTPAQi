@@ -195,14 +195,14 @@ internal static partial class MgwServicios
     /// <remarks>En la tabla de parámetros del manual parecen intercambiadas las descripciones de los dos identificadores; la firma y el ejemplo indican que <paramref name="aIdDocumento"/> es de entrada y <paramref name="aIdMovimiento"/> recibe el nuevo identificador.</remarks>
     [DllImport(Dll)]
     internal static extern int fAltaMovimiento(int aIdDocumento, ref int aIdMovimiento,
-        tMovimiento astMovimiento);
+        ref tMovimiento astMovimiento);
 
     /// <summary>Agrega datos adicionales de series, lotes, pedimentos o características a un movimiento.</summary>
     /// <param name="aIdMovimiento">Identificador del movimiento.</param>
     /// <param name="aTipoProducto">Datos adicionales del producto asociados al movimiento.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fAltaMovimientoEx(ref int aIdMovimiento, tTipoProducto aTipoProducto);
+    internal static extern int fAltaMovimientoEx(ref int aIdMovimiento, ref tTipoProducto aTipoProducto);
 
     /// <summary>Da de alta un movimiento con importes y porcentajes de descuento.</summary>
     /// <param name="aIdDocumento">Identificador del documento al que pertenece el movimiento.</param>
@@ -212,7 +212,7 @@ internal static partial class MgwServicios
     /// <remarks>Incluye importes y porcentajes de descuentos, a diferencia de <see cref="fAltaMovimiento"/>. La tabla del manual parece intercambiar las descripciones de los identificadores; la sintaxis y el ejemplo indican que el documento entra por valor y el identificador del movimiento se recibe por referencia.</remarks>
     [DllImport(Dll)]
     internal static extern int fAltaMovimientoCDesct(int aIdDocumento, ref int aIdMovimiento,
-        tMovimientoDesc astMovimiento);
+        ref tMovimientoDesc astMovimiento);
 
     /// <summary>Inserta un registro de características para el movimiento indicado.</summary>
     /// <param name="aIdMovimiento">Identificador del movimiento.</param>
@@ -222,7 +222,7 @@ internal static partial class MgwServicios
     /// <remarks>El ejemplo indica que el primer identificador es de entrada y el segundo recibe el identificador creado.</remarks>
     [DllImport(Dll)]
     internal static extern int fAltaMovimientoCaracteristicas(int aIdMovimiento,
-        ref int aIdMovtoCaracteristicas, tCaracteristicas aCaracteristicas);
+        ref int aIdMovtoCaracteristicas, ref tCaracteristicas aCaracteristicas);
 
     /// <summary>Da de alta características y unidades de compra/venta para el movimiento indicado.</summary>
     /// <param name="aIdMovimiento">Identificador del movimiento.</param>
@@ -232,7 +232,7 @@ internal static partial class MgwServicios
     /// <remarks>El ejemplo indica que el primer identificador es de entrada y el segundo recibe el identificador creado. El layout de <see cref="tCaracteristicasUnidades"/> requiere confirmación contra los headers instalados del SDK.</remarks>
     [DllImport(Dll)]
     internal static extern int fAltaMovtoCaracteristicasUnidades(int aIdMovimiento,
-        ref int aIdMovtoCaracteristicas, tCaracteristicasUnidades aCaracteristicasUnidades);
+        ref int aIdMovtoCaracteristicas, ref tCaracteristicasUnidades aCaracteristicasUnidades);
 
     /// <summary>Agrega los datos de series, lotes o pedimentos al movimiento indicado.</summary>
     /// <param name="aIdMovimiento">Identificador del movimiento.</param>
@@ -240,7 +240,7 @@ internal static partial class MgwServicios
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
     internal static extern int fAltaMovimientoSeriesCapas(int aIdMovimiento,
-        tSeriesCapas aSeriesCapas);
+        ref tSeriesCapas aSeriesCapas);
 
     #endregion
 }

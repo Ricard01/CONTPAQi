@@ -123,21 +123,21 @@ internal static partial class MgwServicios
     /// <param name="astCteProv">Datos del cliente o proveedor.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fAltaCteProv(ref int aIdCteProv, TcteProv astCteProv);
+    internal static extern int fAltaCteProv(ref int aIdCteProv, ref TcteProv astCteProv);
 
     /// <summary>Actualiza el cliente o proveedor identificado por su código.</summary>
     /// <param name="aCodigoCteProv">Código del registro que se actualizará.</param>
     /// <param name="astCteProv">Nuevos datos del cliente o proveedor.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
-    internal static extern int fActualizaCteProv(StringBuilder aCodigoCteProv, TcteProv astCteProv);
+    internal static extern int fActualizaCteProv(StringBuilder aCodigoCteProv, ref TcteProv astCteProv);
 
     /// <summary>Copia los campos de la estructura al registro activo de cliente o proveedor.</summary>
     /// <param name="astCteProv">Estructura con los datos que se asignarán.</param>
     /// <param name="aEsAlta">1 para un registro nuevo; 2 para actualizar uno existente.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fLlenaRegistroCteProv(TcteProv astCteProv, int aEsAlta);
+    internal static extern int fLlenaRegistroCteProv(ref TcteProv astCteProv, int aEsAlta);
 
     #endregion
 }

@@ -135,18 +135,18 @@ internal static partial class MgwServicios
     /// <param name="aIdProducto">Recibe el identificador asignado.</param><param name="astProducto">Datos del producto.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fAltaProducto(ref int aIdProducto, tProducto astProducto);
+    internal static extern int fAltaProducto(ref int aIdProducto, ref tProducto astProducto);
 
     /// <summary>Actualiza el producto identificado por código.</summary><param name="aCodigoProducto">Código del producto.</param><param name="astProducto">Nuevos datos.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     /// <remarks>La tabla de parámetros del PDF contiene <c>astCteProv</c>, aparentemente copiado de otro apartado; aquí se usa la estructura de producto indicada por la función.</remarks>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
-    internal static extern int fActualizaProducto(string aCodigoProducto, tProducto astProducto);
+    internal static extern int fActualizaProducto(string aCodigoProducto, ref tProducto astProducto);
 
     /// <summary>Copia los campos de la estructura al registro activo del producto.</summary><param name="astProducto">Estructura con los datos.</param><param name="aEsAlta">1 para alta; 2 para actualización.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fLlenaRegistroProducto(tProducto astProducto, int aEsAlta);
+    internal static extern int fLlenaRegistroProducto(ref tProducto astProducto, int aEsAlta);
 
     #endregion
 }
