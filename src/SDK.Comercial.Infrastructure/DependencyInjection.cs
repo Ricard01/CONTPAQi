@@ -19,7 +19,7 @@ public static class DependencyInjection
     /// <param name="services">Contenedor donde se registran los servicios.</param>
     /// <param name="configuration">Configuración de la aplicación, incluida la sección ComercialSdk.</param>
     /// <returns>El mismo contenedor de servicios para permitir encadenar registros.</returns>
-    /// <remarks>Agrega la configuración, la sesión y la cola del SDK, el worker en segundo plano y los componentes de conexión y acceso a empresas al contenedor de servicios.</remarks>
+    /// <remarks>Agrega la configuración, la sesión y la cola del SDK, el worker en segundo plano, los componentes de conexión y acceso a empresas al contenedor de servicios.</remarks>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Convierte la sección "ComercialSdk" de appsettings y de las demás fuentes de
