@@ -29,7 +29,7 @@ internal sealed class DocumentosSdk : IDocumentosSdk
     public int AltaMovimiento(int idDocumento, tMovimiento movimiento)
     {
         var id = 0;
-        SdkResultado.Verificar(MgwServicios.fAltaMovimiento(idDocumento, ref id, movimiento));
+        SdkResultado.Verificar(MgwServicios.fAltaMovimiento(idDocumento, ref id, ref movimiento));
         return id;
     }
 

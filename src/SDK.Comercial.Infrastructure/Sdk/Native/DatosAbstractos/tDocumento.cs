@@ -4,7 +4,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Datos de documento usados por el SDK (RegDocumento / tDocumento).</summary>
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tDocumento
 {
     /// <summary>Folio del documento.</summary>

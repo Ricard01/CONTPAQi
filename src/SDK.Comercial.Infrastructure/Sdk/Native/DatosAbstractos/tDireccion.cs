@@ -4,7 +4,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Dirección de cliente/proveedor (RegDireccion / tDireccion).</summary>
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tDireccion
 {
     /// <summary>Código de cliente o proveedor.</summary>

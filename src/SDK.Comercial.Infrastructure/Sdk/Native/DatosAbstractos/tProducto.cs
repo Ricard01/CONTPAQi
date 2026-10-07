@@ -4,7 +4,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Datos de producto (RegProducto / tProducto) según el manual del SDK.</summary>
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tProducto
 {
     /// <summary>Código del producto.</summary>

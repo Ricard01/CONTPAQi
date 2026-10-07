@@ -9,7 +9,7 @@ namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 /// La representación usa los tipos homólogos de <see cref="tCaracteristicas"/> y <see cref="TUnidad"/>.
 /// Confirme el layout con los headers del SDK instalado antes de usar esta firma en producción.
 /// </remarks>
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tCaracteristicasUnidades
 {
     /// <summary>Abreviatura de la unidad de compra/venta.</summary>

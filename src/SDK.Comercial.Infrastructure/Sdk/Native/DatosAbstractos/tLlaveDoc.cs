@@ -4,7 +4,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Llave de documento usada para búsquedas y operaciones de alto nivel (RegLlaveDoc / tLlaveDoc).</summary>
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tLlaveDoc
 {
     /// <summary>Código del concepto. El manual muestra el nombre de campo <c>aConsepto</c>.</summary>

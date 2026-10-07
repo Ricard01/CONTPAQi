@@ -274,7 +274,7 @@ internal static partial class MgwServicios
     /// <param name="aAfecta">True para afectar el documento; false para desafectarlo.</param>
    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fAfectaDocto(tLlaveDoc aLlaveDocto, [MarshalAs(UnmanagedType.Bool)] bool aAfecta);
+    internal static extern int fAfectaDocto(ref tLlaveDoc aLlaveDocto, [MarshalAs(UnmanagedType.Bool)] bool aAfecta);
 
     /// <summary>Asocia los documentos indicados y aplica el importe del pago al documento por pagar.</summary>
     /// <param name="aDoctoaPagar">Llave del documento por pagar.</param>
@@ -284,14 +284,14 @@ internal static partial class MgwServicios
     /// <param name="aFecha">Fecha del pago.</param>
    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     [DllImport(Dll, CharSet = CharSet.Ansi)]
-    internal static extern int fSaldarDocumento(tLlaveDoc aDoctoaPagar, tLlaveDoc aDoctoPago, double aImporte, int aIdMoneda, [MarshalAs(UnmanagedType.LPStr)] string aFecha);
+    internal static extern int fSaldarDocumento(ref tLlaveDoc aDoctoaPagar, ref tLlaveDoc aDoctoPago, double aImporte, int aIdMoneda, [MarshalAs(UnmanagedType.LPStr)] string aFecha);
 
     /// <summary>Elimina la asociación entre el documento por pagar y el documento que lo pagó.</summary>
     /// <param name="aDoctoaPagar">Llave del documento por pagar.</param>
     /// <param name="aDoctoPago">Llave del documento que realiza el pago.</param>
    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fBorrarAsociacion(tLlaveDoc aDoctoaPagar, tLlaveDoc aDoctoPago);
+    internal static extern int fBorrarAsociacion(ref tLlaveDoc aDoctoaPagar, ref tLlaveDoc aDoctoPago);
 
     /// <summary>Regresa el desglose de bases e IVA del documento de cargo indicado por su llave.</summary>
     /// <param name="aLlaveDocto">Llave del documento que se consultará.</param>
@@ -305,7 +305,7 @@ internal static partial class MgwServicios
     /// <param name="aIVAOtrasTasas">Recibe el IVA de otras tasas.</param>
    /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error que puede consultarse mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)]
-    internal static extern int fRegresaIVACargo(tLlaveDoc aLlaveDocto,
+    internal static extern int fRegresaIVACargo(ref tLlaveDoc aLlaveDocto,
         ref double aNetoTasa15, ref double aNetoTasa10, ref double aNetoTasaCero,
         ref double aNetoTasaExcenta, ref double aNetoOtrasTasas,
         ref double aIVATasa15, ref double aIVATasa10, ref double aIVAOtrasTasas);
@@ -413,7 +413,7 @@ internal static partial class MgwServicios
     /// <param name="aLlaveDocto">Llave compuesta por código del concepto, serie y folio.</param>
     /// <returns>0 si encontró el documento; otro valor es un código de error del SDK.</returns>
     [DllImport(Dll)]
-    internal static extern int fBuscaDocumento(tLlaveDoc aLlaveDocto);
+    internal static extern int fBuscaDocumento(ref tLlaveDoc aLlaveDocto);
 
     #endregion
 }

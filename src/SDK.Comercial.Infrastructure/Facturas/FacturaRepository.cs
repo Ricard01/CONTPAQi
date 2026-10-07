@@ -12,12 +12,8 @@ namespace SDK.Comercial.Infrastructure.Facturas;
 /// Todo ocurre dentro de una sola operación de la cola, así ningún otro trabajo puede intercalarse
 /// entre el alta del documento y la de sus movimientos.
 /// </summary>
-internal sealed class FacturaRepository(
-    SdkColaTrabajo cola,
-    IDocumentosSdk documentos,
-    ILogger<FacturaRepository> logger) : IFacturaRepository
+internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk documentos, ILogger<FacturaRepository> logger) : IFacturaRepository
 {
-    // El manual pide un valor mayor que 5 para documentos creados por aplicaciones distintas de los PAQ.
     private const int SistemaOrigen = 205;
     private const int MonedaPesos = 1;
 

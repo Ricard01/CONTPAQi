@@ -88,17 +88,17 @@ internal static partial class MgwServicios
     /// <summary>Da de alta un valor de clasificación.</summary><param name="aIdValorClasif">Recibe el identificador asignado.</param><param name="astValorClasif">Datos del valor.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)] 
-    internal static extern int fAltaValorClasif(ref int aIdValorClasif, TValorClasificacion astValorClasif);
+    internal static extern int fAltaValorClasif(ref int aIdValorClasif, ref TValorClasificacion astValorClasif);
     
     /// <summary>Actualiza un valor de clasificación identificado por código.</summary><param name="aCodigoValorClasif">Código del valor que se actualizará.</param><param name="astValorClasif">Nuevos datos del valor.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     /// <remarks>El nombre de función de la sintaxis del PDF parece copiado de la búsqueda de clasificaciones; se conserva aquí la operación descrita como actualización de valor.</remarks>
     [DllImport(Dll, CharSet = CharSet.Ansi, EntryPoint = "fActualizaValorClasif")] 
-    internal static extern int fActualizaValorClasif(string aCodigoValorClasif, TValorClasificacion astValorClasif);
+    internal static extern int fActualizaValorClasif(string aCodigoValorClasif, ref TValorClasificacion astValorClasif);
     
     /// <summary>Copia los campos de la estructura al registro activo del valor de clasificación.</summary><param name="astValorClasif">Datos que se asignarán.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     [DllImport(Dll)] 
-    internal static extern int fLlenaRegistroValorClasif(TValorClasificacion astValorClasif);
+    internal static extern int fLlenaRegistroValorClasif(ref TValorClasificacion astValorClasif);
     #endregion
 }

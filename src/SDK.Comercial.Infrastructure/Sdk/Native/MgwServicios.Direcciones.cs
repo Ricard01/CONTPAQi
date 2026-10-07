@@ -107,14 +107,14 @@ internal static partial class MgwServicios
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     /// <remarks><see cref="tDireccion.cTipoDireccion"/> debe ser 1 para domicilio fiscal o 2 para domicilio de envío.</remarks>
     [DllImport(Dll)]
-    internal static extern int fAltaDireccion(ref int aIdDireccion, tDireccion astDireccion);
+    internal static extern int fAltaDireccion(ref int aIdDireccion, ref tDireccion astDireccion);
 
     /// <summary>Actualiza la dirección asociada al registro activo de cliente o proveedor.</summary>
     /// <param name="astDireccion">Datos actualizados de la dirección.</param>
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     /// <remarks>La sintaxis del PDF repite por error el nombre de otra función; se usa el encabezado y la descripción de <c>fActualizaDireccion</c>. El campo <see cref="tDireccion.cTipoDireccion"/> debe ser 1 fiscal o 2 envío.</remarks>
     [DllImport(Dll)]
-    internal static extern int fActualizaDireccion(tDireccion astDireccion);
+    internal static extern int fActualizaDireccion(ref tDireccion astDireccion);
 
     /// <summary>Copia los campos de la estructura al registro de dirección activo.</summary>
     /// <param name="astDireccion">Estructura con los datos de la dirección.</param>
@@ -122,7 +122,7 @@ internal static partial class MgwServicios
     /// <returns><c>0</c> si tuvo éxito; otro valor es un código de error consultable mediante <see cref="fError"/>.</returns>
     /// <remarks><see cref="tDireccion.cTipoDireccion"/> debe ser 1 para domicilio fiscal o 2 para domicilio de envío.</remarks>
     [DllImport(Dll)]
-    internal static extern int fLlenaRegistroDireccion(tDireccion astDireccion, int aEsAlta);
+    internal static extern int fLlenaRegistroDireccion(ref tDireccion astDireccion, int aEsAlta);
 
     #endregion
 }

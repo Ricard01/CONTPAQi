@@ -4,7 +4,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Unidad de medida (RegUnidad / TUnidad).</summary>
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct TUnidad
 {
     /// <summary>Nombre de la unidad.</summary>
