@@ -3,7 +3,7 @@ using SDK.Comercial.Application.Common.Exceptions;
 namespace SDK.Comercial.Infrastructure.Sdk;
 
 /// <summary>
-/// Administra el ciclo de vida de la sesión global de CONTPAQi Comercial y su empresa activa.
+/// Administra el ciclo de vida de la sesión global de CONTPAQi Comercial Premium y su empresa activa.
 /// Se mantiene separado de la cola para poder probar la ejecución serializada sin cargar la DLL nativa.
 /// No debe crecer con operaciones de clientes, productos o documentos; esas pertenecen a sus repositorios.
 /// </summary>

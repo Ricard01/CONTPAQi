@@ -8,6 +8,7 @@ internal struct tTipoProducto
 {
     /// <summary>Datos de series y capas (estructura <see cref="tSeriesCapas"/>).</summary>
     internal tSeriesCapas aSeriesCapas;
+
     /// <summary>Datos de características (estructura <see cref="tCaracteristicas"/>).</summary>
     internal tCaracteristicas aCaracteristicas;
 }

@@ -10,7 +10,10 @@ internal struct TValorClasificacion
     /// <summary>Clasificación.</summary> internal int cClasificacionDe;
     /// <summary>Número de clasificación.</summary> internal int cNumClasificacion;
     /// <summary>Código del valor de clasificación.</summary>
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongCodValorClasif + 1)] internal string cCodigoValorClasificacion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongCodValorClasif + 1)]
+    internal string cCodigoValorClasificacion;
+
     /// <summary>Descripción del valor de clasificación.</summary>
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongDescripcion + 1)] internal string cValorClasificacion;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongDescripcion + 1)]
+    internal string cValorClasificacion;
 }

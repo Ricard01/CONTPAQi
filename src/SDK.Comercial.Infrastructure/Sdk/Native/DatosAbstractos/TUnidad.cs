@@ -8,9 +8,14 @@ namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 internal struct TUnidad
 {
     /// <summary>Nombre de la unidad.</summary>
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongNombre + 1)] internal string cNombreUnidad;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongNombre + 1)]
+    internal string cNombreUnidad;
+
     /// <summary>Abreviatura de la unidad.</summary>
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongAbreviatura + 1)] internal string cAbreviatura;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongAbreviatura + 1)]
+    internal string cAbreviatura;
+
     /// <summary>Texto de despliegue de la unidad.</summary>
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongAbreviatura + 1)] internal string cDespliegue;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongAbreviatura + 1)]
+    internal string cDespliegue;
 }

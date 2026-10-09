@@ -10,8 +10,7 @@ namespace SDK.Comercial.Infrastructure.Sdk;
 /// Adapta el ciclo de vida de MGWServicios.dll a una sesión de CONTPAQi Comercial.
 /// Todas sus operaciones se invocan desde el hilo exclusivo de <see cref="Cola.SdkWorker"/>.
 /// </summary>
-internal sealed class SesionComercialSdk(IOptions<ComercialSdkOptions> opciones,
-    ILogger<SesionComercialSdk> logger) : ISesionComercialSdk
+internal sealed class SesionComercialSdk(IOptions<ComercialSdkOptions> opciones, ILogger<SesionComercialSdk> logger) : ISesionComercialSdk
 {
     private const string LlaveRegistro = @"SOFTWARE\Computación en Acción, SA CV\CONTPAQ I COMERCIAL";
 
@@ -37,13 +36,10 @@ internal sealed class SesionComercialSdk(IOptions<ComercialSdkOptions> opciones,
             throw new ComercialSdkException($"Falta definir {ComercialSdkOptions.Seccion}:Usuario.");
         }
 
-        // El orden es intencional: primero se proporcionan las credenciales para evitar que un
-        // servicio de Windows intente mostrar el diálogo de inicio de sesión; después se llama a
-        // fInicializaSDK, que es la inicialización obligatoria y predeterminada para Comercial Premium.
-        // fSetNombrePAQ no se usa: el manual lo reserva como alternativa a fInicializaSDK cuando se
-        // desea conectar con Factura Electrónica.
+        // El orden afecta primero fInicioSesionSDK y luego fInicializaSDK o fSetNombrePAQ con cualquiera de los 2 funciona.
+        // Nota en el manual de SDK solicita obligatorio fInicializaSDK, pero incluso sino se incluye y se trabaja solo con fSetNombrePAQ el SDK sigue funcionando correctamente. 
         MgwServicios.fInicioSesionSDK(opt.Usuario, opt.Contrasena ?? string.Empty);
-        // Al parecer no lo necesito segun ejemplos  SdkResultado.Verificar(MgwServicios.fInicializaSDK());
+        SdkResultado.Verificar(MgwServicios.fInicializaSDK());
     }
 
     /// <inheritdoc />
