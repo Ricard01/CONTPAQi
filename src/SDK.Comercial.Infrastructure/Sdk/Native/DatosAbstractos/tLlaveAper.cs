@@ -3,7 +3,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
-/// <summary>Llave de apertura de caja (Llave de aperturas – RegLlaveAper - tLlaveAper).</summary>
+/// <summary>Llave de apertura de caja (RegLlaveAper - tLlaveAper).</summary>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tLlaveAper
 {

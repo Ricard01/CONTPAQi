@@ -5,7 +5,7 @@ namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Unidad de medida (RegUnidad / TUnidad).</summary>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
-internal struct TUnidad
+internal struct tUnidad
 {
     /// <summary>Nombre de la unidad.</summary>
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongNombre + 1)]

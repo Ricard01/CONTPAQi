@@ -5,7 +5,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
-/// <summary>Datos de documento usados por el SDK (Documentos – RegDocumento – tDocumento).</summary>
+/// <summary>Datos de documento (RegDocumento – tDocumento).</summary>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tDocumento
 {

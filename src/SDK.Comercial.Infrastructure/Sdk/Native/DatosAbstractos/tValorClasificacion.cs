@@ -5,7 +5,7 @@ namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
 /// <summary>Valor de clasificación (RegValorClasificacion / TValorClasificacion).</summary>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
-internal struct TValorClasificacion
+internal struct tValorClasificacion
 {
     /// <summary>Clasificación.</summary> internal int cClasificacionDe;
     /// <summary>Número de clasificación.</summary> internal int cNumClasificacion;

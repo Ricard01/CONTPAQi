@@ -3,7 +3,7 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
-/// <summary>Valores de características de un movimiento (Caracteristicas / tCaracteristicas).</summary>
+/// <summary>Movimientos con características (Caracteristicas / tCaracteristicas).</summary>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tCaracteristicas
 {

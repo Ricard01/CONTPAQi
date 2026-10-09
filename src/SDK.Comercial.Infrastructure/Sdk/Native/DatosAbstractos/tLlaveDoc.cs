@@ -3,11 +3,12 @@ using SDK.Comercial.Infrastructure.Sdk.Native.Constantes;
 
 namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 
-/// <summary>Llave de documento (Llave del Documento – RegLlaveDoc – tLlaveDoc).</summary>
+/// <summary>Llave de documento (RegLlaveDoc – tLlaveDoc).</summary>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
 internal struct tLlaveDoc
 {
     /// <summary>Código del concepto del documento.</summary>
+    /// TODO: Posible error gramatical
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MgwConstantes.kLongCodigo + 1)]
     internal string aConsepto;
 

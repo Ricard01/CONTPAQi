@@ -6,7 +6,7 @@ namespace SDK.Comercial.Infrastructure.Sdk.Native.DatosAbstractos;
 /// <summary>Datos de características vinculados a unidades de compra/venta.</summary>
 /// <remarks>
 /// <see cref="MgwServicios.fAltaMovimientoCaracteristicas"/> implimenta esta estructura, pero no incluye una tabla de tipos y longitudes para esta estructura.
-/// La representación usa los tipos homólogos de <see cref="tMovimientoCaract"/> y <see cref="TUnidad"/>.
+/// La representación usa los tipos homólogos de <see cref="tMovimientoCaract"/> y <see cref="tUnidad"/>.
 /// Confirme el layout con los headers del SDK instalado antes de usar esta firma en producción.
 /// </remarks>
 [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Ansi)]
