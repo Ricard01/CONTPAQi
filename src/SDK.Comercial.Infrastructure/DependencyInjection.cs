@@ -22,9 +22,7 @@ public static class DependencyInjection
     /// <remarks>Agrega la configuración, la sesión y la cola del SDK, el worker en segundo plano, los componentes de conexión y acceso a empresas al contenedor de servicios.</remarks>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Convierte la sección "ComercialSdk" de appsettings y de las demás fuentes de
-        // configuración en ComercialSdkOptions. ValidateOnStart evita iniciar el servicio con
-        // valores que inevitablemente impedirían crear la sesión o la cola.
+
         services.AddOptions<ComercialSdkOptions>()
             .Bind(configuration.GetSection(ComercialSdkOptions.Seccion))
             .Validate(o => !string.IsNullOrWhiteSpace(o.Usuario),

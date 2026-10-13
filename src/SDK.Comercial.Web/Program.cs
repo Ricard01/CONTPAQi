@@ -1,12 +1,11 @@
-using Microsoft.Extensions.Hosting.WindowsServices;
 using SDK.Comercial.Infrastructure;
 using SDK.Comercial.Web.Infrastructure;
 
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    // Como servicio el directorio actual es System32; appsettings.json se busca junto al ejecutable.
-    ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : default,
+    // Como servicio de Windows, el directorio actual es System32. Sin esto no se encuentra appsettings.json y la configuración llega vacía (falla la validación de ComercialSdkOptions).
+    ContentRootPath = AppContext.BaseDirectory,
 });
 
 builder.Services.AddWindowsService(options => options.ServiceName = "CONTPAQi.SDK.Comercial");

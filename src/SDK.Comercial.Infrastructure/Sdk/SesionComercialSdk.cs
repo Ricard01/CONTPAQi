@@ -19,7 +19,6 @@ internal sealed class SesionComercialSdk(IOptions<ComercialSdkOptions> opciones,
     {
         var opt = opciones.Value;
         
-
         var ruta = !string.IsNullOrWhiteSpace(opt.RutaInstalacion) ? opt.RutaInstalacion : LeerRutaDelRegistro();
         if (string.IsNullOrWhiteSpace(ruta))
         {
@@ -31,14 +30,10 @@ internal sealed class SesionComercialSdk(IOptions<ComercialSdkOptions> opciones,
         Directory.SetCurrentDirectory(ruta);
         logger.LogInformation("Iniciando SDK de CONTPAQi desde {Ruta}", ruta);
         
-        if (string.IsNullOrWhiteSpace(opt.Usuario))
-        {
-            throw new ComercialSdkException($"Falta definir {ComercialSdkOptions.Seccion}:Usuario.");
-        }
-
+        
         // El orden afecta primero fInicioSesionSDK y luego fInicializaSDK o fSetNombrePAQ con cualquiera de los 2 funciona.
         // Nota en el manual de SDK solicita obligatorio fInicializaSDK, pero incluso sino se incluye y se trabaja solo con fSetNombrePAQ el SDK sigue funcionando correctamente. 
-        MgwServicios.fInicioSesionSDK(opt.Usuario, opt.Contrasena ?? string.Empty);
+        MgwServicios.fInicioSesionSDK(opt.Usuario!, opt.Contrasena ?? string.Empty);
         SdkResultado.Verificar(MgwServicios.fInicializaSDK());
     }
 
