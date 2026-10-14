@@ -5,18 +5,10 @@ namespace SDK.Comercial.Infrastructure.Conexion;
 
 internal sealed class ConexionComercial(SdkColaTrabajo cola) : IConexionComercial
 {
-    public Task<EstadoConexion> VerificarAsync(string? rutaEmpresa = null, CancellationToken cancellationToken = default) =>
+    public Task<EstadoConexion> VerificarAsync(CancellationToken cancellationToken = default) =>
         cola.EncolarAsync(contexto =>
         {
-            if (string.IsNullOrWhiteSpace(rutaEmpresa))
-            {
-                contexto.UsarEmpresa();
-            }
-            else
-            {
-                contexto.UsarEmpresa(rutaEmpresa);
-            }
-
-            return new EstadoConexion(contexto.EmpresaAbierta!);
+            contexto.UsarEmpresa();
+            return new EstadoConexion(contexto.RutaEmpresa);
         }, cancellationToken);
 }

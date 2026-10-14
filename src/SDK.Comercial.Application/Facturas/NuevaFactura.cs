@@ -2,7 +2,7 @@ using SDK.Comercial.Application.Common.Exceptions;
 
 namespace SDK.Comercial.Application.Facturas;
 
-/// <param name="CodigoConcepto">Concepto de documento de Comercial (p. ej. el de "Factura").</param>
+/// <param name="CodigoConcepto">Concepto de documento de Comercial.</param>
 /// <param name="Serie">Serie del documento; nula o vacía usa la serie configurada en el concepto.</param>
 /// <param name="Fecha">Fecha del documento.</param>
 /// <param name="CodigoCliente">Código del cliente.</param>

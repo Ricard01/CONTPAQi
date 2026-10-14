@@ -32,7 +32,7 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         // Estos objetos son Singleton porque representan un solo SDK nativo, una sola cola y
-        // una sola empresa activa para toda la vida del proceso. Registrar otra instancia
+        // una sola empresa (la configurada) para toda la vida del proceso. Registrar otra instancia
         // permitiría sesiones concurrentes sobre un SDK que mantiene estado global.
         services.AddSingleton<ISesionComercialSdk, SesionComercialSdk>();
         services.AddSingleton<SdkColaTrabajo>();

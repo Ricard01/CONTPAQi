@@ -12,11 +12,10 @@ public  class Conexion : IEndpointGroup
     }
 
     [EndpointSummary("Verificar conexión con CONTPAQi Comercial")]
-    [EndpointDescription("Verifica que sea posible establecer una conexión con CONTPAQi Comercial. " +
-                         "Opcionalmente se puede especificar una empresa mediante el parámetro 'empresa'.")]
-    public static async Task<IResult> VerificarConexion(IConexionComercial conexion, string? empresa, CancellationToken cancellationToken)
+    [EndpointDescription("Verifica que el SDK esté iniciado y que la empresa configurada en ComercialSdk:RutaEmpresa esté abierta.")]
+    public static async Task<IResult> VerificarConexion(IConexionComercial conexion, CancellationToken cancellationToken)
     {
-        var resultado = await conexion.VerificarAsync(empresa, cancellationToken);
+        var resultado = await conexion.VerificarAsync(cancellationToken);
 
         return TypedResults.Ok(resultado);
     }

@@ -39,7 +39,7 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
             aSerie = serie,
             // tDocumento.aFecha se interpreta como mm/dd/aaaa, sin depender de la cultura del servidor.
             aFecha = factura.Fecha.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture),
-            aCodigoCteProv = factura.CodigoCliente,
+            //aCodigoCteProv = factura.CodigoCliente,
             aCodigoAgente = string.Empty,
             aReferencia = factura.Referencia ?? string.Empty,
         });

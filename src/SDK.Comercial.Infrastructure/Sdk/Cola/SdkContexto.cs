@@ -1,54 +1,38 @@
-using SDK.Comercial.Application.Common.Exceptions;
-
 namespace SDK.Comercial.Infrastructure.Sdk.Cola;
 
 /// <summary>
-/// Estado compartido por las operaciones encoladas. Solo existe dentro del hilo consumidor y
-/// garantiza que como máximo haya una empresa abierta en el SDK global.
+/// Estado compartido por las operaciones encoladas. Solo existe dentro del hilo consumidor.
+/// La API es mono empresa: trabaja siempre con <see cref="ComercialSdkOptions.RutaEmpresa"/>.
 /// </summary>
-internal sealed class SdkContexto(ISesionComercialSdk sdk, string? empresaPredeterminada = null)
+internal sealed class SdkContexto(ISesionComercialSdk sdk, string rutaEmpresa)
 {
-    public string? EmpresaAbierta { get; private set; }
+    public string RutaEmpresa { get; } = rutaEmpresa;
+
+    public bool EmpresaAbierta { get; private set; }
 
     /// <summary>
-    /// Abre la ruta configurada en <see cref="ComercialSdkOptions.RutaEmpresa"/>. El valor debe ser
-    /// una ruta de empresa aceptada por <c>fAbreEmpresa</c>; este método no resuelve nombres cortos.
+    /// Garantiza que la empresa configurada esté abierta. Normalmente ya lo está desde el arranque;
+    /// si en ese momento falló, aquí se reintenta y el error llega a la operación que la necesita.
     /// </summary>
     public void UsarEmpresa()
     {
-        if (string.IsNullOrWhiteSpace(empresaPredeterminada))
-        {
-            throw new ComercialSdkException(
-                $"No se indicó empresa y no hay una predeterminada. Configura {ComercialSdkOptions.Seccion}:RutaEmpresa.");
-        }
-
-        UsarEmpresa(empresaPredeterminada);
-    }
-
-    /// <summary>
-    /// Abre la empresa indicada. Si ya está abierta evita una llamada nativa innecesaria; si es
-    /// distinta, primero cierra la anterior porque el SDK solo conserva una empresa activa.
-    /// </summary>
-    public void UsarEmpresa(string ruta)
-    {
-        if (string.Equals(EmpresaAbierta, ruta, StringComparison.OrdinalIgnoreCase))
+        if (EmpresaAbierta)
         {
             return;
         }
 
-        CerrarEmpresa();
-        sdk.AbrirEmpresa(ruta);
-        EmpresaAbierta = ruta;
+        sdk.AbrirEmpresa(RutaEmpresa);
+        EmpresaAbierta = true;
     }
 
     public void CerrarEmpresa()
     {
-        if (EmpresaAbierta is null)
+        if (!EmpresaAbierta)
         {
             return;
         }
 
-        EmpresaAbierta = null;
+        EmpresaAbierta = false;
         sdk.CerrarEmpresa();
     }
 }

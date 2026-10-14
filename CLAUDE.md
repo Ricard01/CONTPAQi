@@ -25,7 +25,7 @@ Estas decisiones son fijas; no proponer alternativas salvo que el usuario lo pid
    - El consumidor es un hilo dedicado (`Thread` propio, no del `ThreadPool`) creado por un `BackgroundService`/`IHostedService`, que:
      - inicializa el SDK una sola vez al arrancar y lo termina al detenerse el servicio;
      - procesa los trabajos uno por uno, en orden;
-     - abre/cierra la empresa según lo requiera cada trabajo (o la mantiene abierta si es la misma);
+     - abre la empresa configurada al arrancar y la mantiene abierta (si falla, la reintenta en el siguiente trabajo);
      - captura cualquier excepción del trabajo y la devuelve al llamador sin tumbar el hilo.
    - Soportar `CancellationToken`: si el llamador cancela antes de que el trabajo empiece, se descarta; una vez iniciado en el SDK, se deja terminar.
    - Preferir un canal acotado (`Channel.CreateBounded`) para no acumular trabajo sin límite; el tamaño va en configuración.
@@ -54,7 +54,7 @@ Piezas clave en Infrastructure:
 - `Sdk/SdkResultado.cs`: traduce los códigos nativos y sus mensajes a excepciones de la aplicación.
 - `Sdk/Cola/SdkColaTrabajo.cs`: la cola (`EncolarAsync(contexto => ...)`), única puerta de entrada al SDK.
 - `Sdk/Cola/SdkWorker.cs`: `BackgroundService` que crea el hilo consumidor dedicado.
-- `Sdk/Cola/SdkContexto.cs`: estado dentro del hilo (`UsarEmpresa(ruta)` abre la empresa solo si cambió).
+- `Sdk/Cola/SdkContexto.cs`: estado dentro del hilo (`UsarEmpresa()` garantiza que la empresa configurada esté abierta).
 - Cada repositorio (p. ej. `Empresas/EmpresaRepository.cs`) implementa un puerto de Application encolando su trabajo.
 - `Sdk/IDocumentosSdk.cs` (`DocumentosSdk`): funciones nativas de documentos/movimientos detrás de una interfaz para que repositorios como `Facturas/FacturaRepository.cs` se prueben con un SDK falso.
 
@@ -74,7 +74,8 @@ Reglas:
 
 ## Configuración
 
-- `appsettings.json` → sección `ComercialSdk` (ruta de instalación, credenciales y empresa predeterminada). La empresa predeterminada (`RutaEmpresa`) se abre al iniciar el SDK y la usa `SdkContexto.UsarEmpresa()` sin argumentos; `GET /api/conexion` la abre para comprobar la conexión.
+- `appsettings.json` → sección `ComercialSdk` (ruta de instalación, credenciales y empresa). `RutaEmpresa` es obligatoria: se abre al iniciar el SDK y la usan todas las operaciones mediante `SdkContexto.UsarEmpresa()`; `GET /api/conexion` comprueba que esté abierta.
+- **La API es mono empresa**: no existe cambio de empresa por petición ni por usuario. Para otra empresa se instala otra instancia del servicio con su propia configuración.
 - Credenciales (usuario/contraseña de Comercial, contraseña de CSD) **nunca** en el repositorio: usar user-secrets en desarrollo y variables de entorno o configuración del servidor en producción.
 
 ## Convenciones de build

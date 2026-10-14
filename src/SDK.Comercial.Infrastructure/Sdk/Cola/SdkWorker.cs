@@ -6,7 +6,7 @@ using SDK.Comercial.Application.Common.Exceptions;
 namespace SDK.Comercial.Infrastructure.Sdk.Cola;
 
 /// <summary>
-/// Hilo consumidor único: inicia el SDK, abre la empresa predeterminada, ejecuta los trabajos de la cola uno por uno y termina el SDK al detenerse.
+/// Hilo consumidor único: inicia el SDK, abre la empresa configurada, ejecuta los trabajos de la cola uno por uno y termina el SDK al detenerse.
 /// </summary>
 internal sealed class SdkWorker(SdkColaTrabajo cola, ISesionComercialSdk sdk, IOptions<ComercialSdkOptions> opciones, ILogger<SdkWorker> logger) : BackgroundService
 {
@@ -51,13 +51,13 @@ internal sealed class SdkWorker(SdkColaTrabajo cola, ISesionComercialSdk sdk, IO
             logger.LogError(ex, "No se pudo iniciar el SDK de CONTPAQi");
         }
 
-        // El contexto conserva cuál empresa está abierta. Como solo lo usa este hilo, no necesita
-        // bloqueos y todas las operaciones observan el mismo estado del SDK.
-        var contexto = new SdkContexto(sdk, opciones.Value.RutaEmpresa);
+        // El contexto conserva si la empresa está abierta. Como solo lo usa este hilo, no necesita
+        // bloqueos. RutaEmpresa es obligatoria y se valida al arrancar (ValidateOnStart).
+        var contexto = new SdkContexto(sdk, opciones.Value.RutaEmpresa!);
         if (errorInicio is null)
         {
             // La empresa se intenta abrir después de inicializar el SDK y antes de aceptar trabajos.
-            AbrirEmpresaPredeterminada(contexto);
+            AbrirEmpresa(contexto);
         }
 
         try
@@ -98,23 +98,17 @@ internal sealed class SdkWorker(SdkColaTrabajo cola, ISesionComercialSdk sdk, IO
         }
     }
 
-    private void AbrirEmpresaPredeterminada(SdkContexto contexto)
+    private void AbrirEmpresa(SdkContexto contexto)
     {
-        var empresa = opciones.Value.RutaEmpresa;
-        if (string.IsNullOrWhiteSpace(empresa))
-        {
-            return;
-        }
-
         try
         {
             contexto.UsarEmpresa();
-            logger.LogInformation("Empresa {Empresa} abierta", empresa);
+            logger.LogInformation("Empresa {Empresa} abierta", contexto.RutaEmpresa);
         }
         catch (Exception ex)
         {
             // No es fatal: la siguiente operación que la use vuelve a intentar abrirla y recibe el error.
-            logger.LogError(ex, "No se pudo abrir la empresa {Empresa}", empresa);
+            logger.LogError(ex, "No se pudo abrir la empresa {Empresa}", contexto.RutaEmpresa);
         }
     }
 
