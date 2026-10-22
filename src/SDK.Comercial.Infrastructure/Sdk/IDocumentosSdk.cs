@@ -17,8 +17,22 @@ internal interface IDocumentosSdk
     /// <summary>Da de alta el encabezado del documento (<c>fAltaDocumento</c>) y devuelve su identificador.</summary>
     int AltaDocumento(tDocumento documento);
 
-    /// <summary>Da de alta un movimiento del documento (<c>fAltaMovimiento</c>) y devuelve su identificador.</summary>
-    int AltaMovimiento(int idDocumento, tMovimiento movimiento);
+    /// <summary>Da de alta un movimiento con descuentos (<c>fAltaMovimientoCDesct</c>) y devuelve su identificador.</summary>
+    int AltaMovimiento(int idDocumento, tMovimientoDesc movimiento);
+
+    /// <summary>
+    /// Localiza el documento, lo edita y escribe los campos indicados
+    /// (<c>fBuscarIdDocumento</c> → <c>fEditarDocumento</c> → <c>fSetDatoDocumento</c> → <c>fGuardaDocumento</c>).
+    /// Si algún campo falla, descarta la edición.
+    /// </summary>
+    void ActualizarDocumento(int idDocumento, IReadOnlyList<(string Campo, string Valor)> campos);
+
+    /// <summary>
+    /// Localiza el movimiento, lo edita y escribe los campos indicados
+    /// (<c>fBuscarIdMovimiento</c> → <c>fEditarMovimiento</c> → <c>fSetDatoMovimiento</c> → <c>fGuardaMovimiento</c>).
+    /// Si algún campo falla, descarta la edición.
+    /// </summary>
+    void ActualizarMovimiento(int idMovimiento, IReadOnlyList<(string Campo, string Valor)> campos);
 
     /// <summary>Localiza el documento por su identificador y lo borra (<c>fBuscarIdDocumento</c> + <c>fBorraDocumento</c>).</summary>
     void BorrarDocumento(int idDocumento);

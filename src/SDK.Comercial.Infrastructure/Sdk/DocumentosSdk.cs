@@ -26,11 +26,54 @@ internal sealed class DocumentosSdk : IDocumentosSdk
     }
 
     /// <inheritdoc />
-    public int AltaMovimiento(int idDocumento, tMovimiento movimiento)
+    public int AltaMovimiento(int idDocumento, tMovimientoDesc movimiento)
     {
         var id = 0;
-        SdkResultado.Verificar(MgwServicios.fAltaMovimiento(idDocumento, ref id, ref movimiento));
+        SdkResultado.Verificar(MgwServicios.fAltaMovimientoCDesct(idDocumento, ref id, ref movimiento));
         return id;
+    }
+
+    /// <inheritdoc />
+    public void ActualizarDocumento(int idDocumento, IReadOnlyList<(string Campo, string Valor)> campos)
+    {
+        SdkResultado.Verificar(MgwServicios.fBuscarIdDocumento(idDocumento));
+        SdkResultado.Verificar(MgwServicios.fEditarDocumento());
+        try
+        {
+            foreach (var (campo, valor) in campos)
+            {
+                SdkResultado.Verificar(MgwServicios.fSetDatoDocumento(campo, valor));
+            }
+
+            SdkResultado.Verificar(MgwServicios.fGuardaDocumento());
+        }
+        catch
+        {
+            // Sin esto el documento queda en modo edición y la siguiente operación del SDK lo arrastra.
+            MgwServicios.fCancelarModificacionDocumento();
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public void ActualizarMovimiento(int idMovimiento, IReadOnlyList<(string Campo, string Valor)> campos)
+    {
+        SdkResultado.Verificar(MgwServicios.fBuscarIdMovimiento(idMovimiento));
+        SdkResultado.Verificar(MgwServicios.fEditarMovimiento());
+        try
+        {
+            foreach (var (campo, valor) in campos)
+            {
+                SdkResultado.Verificar(MgwServicios.fSetDatoMovimiento(campo, valor));
+            }
+
+            SdkResultado.Verificar(MgwServicios.fGuardaMovimiento());
+        }
+        catch
+        {
+            MgwServicios.fCancelaCambiosMovimiento();
+            throw;
+        }
     }
 
     /// <inheritdoc />

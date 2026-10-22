@@ -8,13 +8,22 @@ namespace SDK.Comercial.Application.Facturas;
 /// <param name="CodigoCliente">Código del cliente.</param>
 /// <param name="Referencia">Referencia opcional del documento.</param>
 /// <param name="Movimientos">Partidas de la factura; debe haber al menos una.</param>
+/// <param name="Observaciones">Observaciones opcionales del documento (<c>COBSERVACIONES</c>).</param>
+/// <param name="TextoExtra1">Texto extra 1 opcional del documento (<c>CTEXTOEXTRA1</c>).</param>
+/// <param name="TextoExtra2">Texto extra 2 opcional del documento (<c>CTEXTOEXTRA2</c>).</param>
+/// <param name="TextoExtra3">Texto extra 3 opcional del documento (<c>CTEXTOEXTRA3</c>).</param>
+/// <remarks>Los importes y porcentaje de impuestos y retenciones se calculan con base a la configuracion del concepto. </remarks>
 public sealed record NuevaFactura(
     string CodigoConcepto,
     string? Serie,
     DateOnly Fecha,
     string CodigoCliente,
     string? Referencia,
-    IReadOnlyList<NuevoMovimiento> Movimientos)
+    IReadOnlyList<NuevoMovimiento> Movimientos,
+    string? Observaciones = null,
+    string? TextoExtra1 = null,
+    string? TextoExtra2 = null,
+    string? TextoExtra3 = null)
 {
     /// <summary>Lanza <see cref="ValidationException"/> con todos los errores encontrados.</summary>
     public void Validar()
@@ -30,7 +39,7 @@ public sealed record NuevaFactura(
             errores[nameof(CodigoCliente)] = ["El cliente es obligatorio."];
         }
 
-        if (Movimientos is null || Movimientos.Count == 0)
+        if (Movimientos.Count == 0)
         {
             errores[nameof(Movimientos)] = ["La factura debe tener al menos un movimiento."];
         }
@@ -60,6 +69,26 @@ public sealed record NuevaFactura(
                     mensajes.Add("El precio no puede ser negativo.");
                 }
 
+                if (m.PorcentajeDescuento is not null && m.ImporteDescuento is not null)
+                {
+                    mensajes.Add("Indique el descuento como porcentaje o como importe, no ambos.");
+                }
+
+                if (m.PorcentajeDescuento is < 0 or > 100)
+                {
+                    mensajes.Add("El porcentaje de descuento debe estar entre 0 y 100.");
+                }
+
+                if (m.ImporteDescuento < 0)
+                {
+                    mensajes.Add("El importe de descuento no puede ser negativo.");
+                }
+                else if (m.ImporteDescuento > m.Unidades * m.Precio)
+                {
+                    mensajes.Add("El importe de descuento no puede ser mayor que el importe del movimiento.");
+                }
+                
+
                 if (mensajes.Count > 0)
                 {
                     errores[$"{nameof(Movimientos)}[{i}]"] = [.. mensajes];
@@ -78,13 +107,17 @@ public sealed record NuevaFactura(
 /// <param name="CodigoAlmacen">Código del almacén de donde sale el producto.</param>
 /// <param name="Unidades">Cantidad vendida.</param>
 /// <param name="Precio">Precio unitario.</param>
-/// <param name="Referencia">Referencia opcional del movimiento.</param>
+/// <param name="Observaciones">Observaciones opcionales del movimiento (<c>COBSERVAMOV</c>).</param>
+/// <param name="PorcentajeDescuento">Porcentaje opcional del descuento 1; excluyente con <paramref name="ImporteDescuento"/>.</param>
+/// <param name="ImporteDescuento">Importe opcional del descuento 1; excluyente con <paramref name="PorcentajeDescuento"/>.</param>
 public sealed record NuevoMovimiento(
     string CodigoProducto,
     string CodigoAlmacen,
     double Unidades,
     double Precio,
-    string? Referencia = null);
+    string? Observaciones = null,
+    double? PorcentajeDescuento = null,
+    double? ImporteDescuento = null);
 
 /// <param name="IdDocumento">Identificador interno asignado por Comercial.</param>
 /// <param name="CodigoConcepto">Concepto con el que se creó.</param>

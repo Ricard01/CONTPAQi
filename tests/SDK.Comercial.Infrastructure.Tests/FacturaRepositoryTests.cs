@@ -57,7 +57,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         var creada = await _repositorio.CrearAsync(Factura());
 
         Assert.Equal(
-            [$"abrir {Empresa}", "siguienteFolio 4 ''", "altaDocumento FA-57", "altaMovimiento 10#1", "altaMovimiento 10#2"],
+            [$"abrir {Empresa}", "siguienteFolio 4 ''", "altaDocumento FA-57", "altaMovimiento 10#1", "altaMovimiento 10#2", "actualizarMovimiento 101"],
             _sesion.Llamadas);
         Assert.Equal(10, creada.IdDocumento);
         Assert.Equal("4", creada.CodigoConcepto);
@@ -92,14 +92,88 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
                 Assert.Equal("1", m.aCodAlmacen);
                 Assert.Equal(2, m.aUnidades);
                 Assert.Equal(150.5, m.aPrecio);
-                Assert.Equal(string.Empty, m.aReferencia);
+                Assert.Equal(0, m.aPorcDescto1);
+                Assert.Equal(0, m.aImporteDescto1);
             },
             m =>
             {
                 Assert.Equal(2, m.aConsecutivo);
                 Assert.Equal("SERV01", m.aCodProdSer);
-                Assert.Equal("Instalación", m.aReferencia);
             });
+
+        // Solo el movimiento con observaciones se edita; el documento no, porque no trae campos extra.
+        Assert.Equal([101], _documentos.CamposMovimiento.Keys);
+        Assert.Equal([("COBSERVAMOV", "Instalación")], _documentos.CamposMovimiento[101]);
+        Assert.Empty(_documentos.CamposDocumento);
+    }
+
+    [Fact]
+    public async Task Envia_descuentos_y_calcula_la_retencion_del_movimiento_sobre_el_importe_con_descuento()
+    {
+        await _repositorio.CrearAsync(Factura(
+            new("SERV01", "1", 2, 1000, PorcentajeDescuento: 10),
+            new("SERV02", "1", 1, 333.33, ImporteDescuento: 33.33)));
+
+        Assert.Collection(_documentos.Movimientos,
+            m =>
+            {
+                Assert.Equal(10, m.aPorcDescto1);
+                Assert.Equal(0, m.aImporteDescto1);
+            },
+            m =>
+            {
+                Assert.Equal(0, m.aPorcDescto1);
+                Assert.Equal(33.33, m.aImporteDescto1);
+            });
+
+        // (2 × 1000 − 10 %) × 10 % = 180; (333.33 − 33.33) × 1.25 % = 3.75.
+        Assert.Equal([("CPORCENTAJERETENCION1", "10"), ("CRETENCION1", "180")], _documentos.CamposMovimiento[100]);
+        Assert.Equal([("CPORCENTAJERETENCION1", "1.25"), ("CRETENCION1", "3.75")], _documentos.CamposMovimiento[101]);
+    }
+
+    [Fact]
+    public async Task Escribe_observaciones_textos_extra_y_retencion_del_documento_despues_de_los_movimientos()
+    {
+        await _repositorio.CrearAsync(Factura() with
+        {
+            Observaciones = "Entregar en almacén",
+            // Retencion1 = 125.5,
+            TextoExtra1 = "OC-991",
+            TextoExtra3 = "Ruta 4",
+        });
+
+        Assert.Equal("actualizarDocumento 10", _sesion.Llamadas[^1]);
+        Assert.Equal(
+            [("COBSERVACIONES", "Entregar en almacén"), ("CTEXTOEXTRA1", "OC-991"), ("CTEXTOEXTRA3", "Ruta 4"), ("CRETENCION1", "125.5")],
+            _documentos.CamposDocumento[10]);
+    }
+
+    [Fact]
+    public async Task Si_falla_la_edicion_del_documento_lo_borra()
+    {
+        _documentos.FallarActualizarDocumento = true;
+
+        var error = await Assert.ThrowsAsync<ComercialSdkException>(() =>
+            _repositorio.CrearAsync(Factura() with { Observaciones = "x" }));
+
+        Assert.Equal(5, error.Codigo);
+        Assert.Equal("borrarDocumento 10", _sesion.Llamadas[^1]);
+    }
+
+    [Fact]
+    public async Task Descuento_y_retencion_invalidos_se_rechazan()
+    {
+        var factura = Factura(
+            new("P1", "1", 1, 100, PorcentajeDescuento: 5, ImporteDescuento: 5),
+            new("P2", "1", 1, 100, PorcentajeDescuento: 101),
+            new("P3", "1", 1, 100, ImporteDescuento: 150)); //with { Retencion1 = -1 };
+
+        var error = await Assert.ThrowsAsync<ValidationException>(() => _repositorio.CrearAsync(factura));
+
+        Assert.Equal(
+            ["Movimientos[0]", "Movimientos[1]", "Movimientos[2]", "Retencion1"],
+            error.Errors.Keys.Order(StringComparer.Ordinal));
+        Assert.Equal(2, error.Errors["Movimientos[1]"].Length);
     }
 
     [Fact]

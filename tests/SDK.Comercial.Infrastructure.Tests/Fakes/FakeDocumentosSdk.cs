@@ -27,7 +27,15 @@ internal sealed class FakeDocumentosSdk(FakeSesionComercialSdk sesion) : IDocume
 
     public List<tDocumento> Documentos { get; } = [];
 
-    public List<tMovimiento> Movimientos { get; } = [];
+    public List<tMovimientoDesc> Movimientos { get; } = [];
+
+    /// <summary>Campos escritos con <see cref="ActualizarDocumento"/>, por identificador de documento.</summary>
+    public Dictionary<int, IReadOnlyList<(string Campo, string Valor)>> CamposDocumento { get; } = [];
+
+    /// <summary>Campos escritos con <see cref="ActualizarMovimiento"/>, por identificador de movimiento.</summary>
+    public Dictionary<int, IReadOnlyList<(string Campo, string Valor)>> CamposMovimiento { get; } = [];
+
+    public bool FallarActualizarDocumento { get; set; }
 
     public HashSet<int> Hilos { get; } = [];
 
@@ -49,7 +57,7 @@ internal sealed class FakeDocumentosSdk(FakeSesionComercialSdk sesion) : IDocume
         return IdDocumentoAsignado;
     }
 
-    public int AltaMovimiento(int idDocumento, tMovimiento movimiento)
+    public int AltaMovimiento(int idDocumento, tMovimientoDesc movimiento)
     {
         Registrar($"altaMovimiento {idDocumento}#{movimiento.aConsecutivo}");
         if (FallarEnMovimiento == movimiento.aConsecutivo)
@@ -59,6 +67,23 @@ internal sealed class FakeDocumentosSdk(FakeSesionComercialSdk sesion) : IDocume
 
         Movimientos.Add(movimiento);
         return _siguienteIdMovimiento++;
+    }
+
+    public void ActualizarDocumento(int idDocumento, IReadOnlyList<(string Campo, string Valor)> campos)
+    {
+        Registrar($"actualizarDocumento {idDocumento}");
+        if (FallarActualizarDocumento)
+        {
+            throw new ComercialSdkException(5, "Campo inválido");
+        }
+
+        CamposDocumento[idDocumento] = campos;
+    }
+
+    public void ActualizarMovimiento(int idMovimiento, IReadOnlyList<(string Campo, string Valor)> campos)
+    {
+        Registrar($"actualizarMovimiento {idMovimiento}");
+        CamposMovimiento[idMovimiento] = campos;
     }
 
     public void BorrarDocumento(int idDocumento)
