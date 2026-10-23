@@ -39,9 +39,9 @@ internal sealed class FakeDocumentosSdk(FakeSesionComercialSdk sesion) : IDocume
 
     public HashSet<int> Hilos { get; } = [];
 
-    public (string Serie, double Folio) SiguienteFolio(string codigoConcepto, string serie)
+    public (string Serie, double Folio) SiguienteFolio(string codigoConcepto)
     {
-        Registrar($"siguienteFolio {codigoConcepto} '{serie}'");
+        Registrar($"siguienteFolio {codigoConcepto}");
         return Folio;
     }
 

@@ -41,7 +41,6 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
 
     private static NuevaFactura Factura(params NuevoMovimiento[] movimientos) => new(
         CodigoConcepto: "4",
-        Serie: null,
         Fecha: new DateOnly(2026, 3, 7),
         CodigoCliente: "CTE001",
         Referencia: "Pedido 123",
@@ -57,7 +56,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         var creada = await _repositorio.CrearAsync(Factura());
 
         Assert.Equal(
-            [$"abrir {Empresa}", "siguienteFolio 4 ''", "altaDocumento FA-57", "altaMovimiento 10#1", "altaMovimiento 10#2", "actualizarMovimiento 101"],
+            [$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-57", "altaMovimiento 10#1", "altaMovimiento 10#2", "actualizarMovimiento 101"],
             _sesion.Llamadas);
         Assert.Equal(10, creada.IdDocumento);
         Assert.Equal("4", creada.CodigoConcepto);
@@ -79,6 +78,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         Assert.Equal(57, documento.aFolio);
         Assert.Equal("03/07/2026", documento.aFecha); // mm/dd/aaaa, independiente de la cultura
         Assert.Equal("CTE001", documento.aCodigoCteProv);
+        Assert.Equal(string.Empty, documento.aCodigoAgente);
         Assert.Equal("Pedido 123", documento.aReferencia);
         Assert.Equal(1, documento.aNumMoneda);
         Assert.Equal(1, documento.aTipoCambio);
@@ -108,7 +108,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Envia_descuentos_y_calcula_la_retencion_del_movimiento_sobre_el_importe_con_descuento()
+    public async Task Envia_los_descuentos_del_movimiento_sin_editarlo_despues()
     {
         await _repositorio.CrearAsync(Factura(
             new("SERV01", "1", 2, 1000, PorcentajeDescuento: 10),
@@ -126,25 +126,23 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
                 Assert.Equal(33.33, m.aImporteDescto1);
             });
 
-        // (2 × 1000 − 10 %) × 10 % = 180; (333.33 − 33.33) × 1.25 % = 3.75.
-        Assert.Equal([("CPORCENTAJERETENCION1", "10"), ("CRETENCION1", "180")], _documentos.CamposMovimiento[100]);
-        Assert.Equal([("CPORCENTAJERETENCION1", "1.25"), ("CRETENCION1", "3.75")], _documentos.CamposMovimiento[101]);
+        // Sin observaciones no hay nada que escribir después del alta; impuestos y retenciones los calcula el concepto.
+        Assert.Empty(_documentos.CamposMovimiento);
     }
 
     [Fact]
-    public async Task Escribe_observaciones_textos_extra_y_retencion_del_documento_despues_de_los_movimientos()
+    public async Task Escribe_observaciones_y_textos_extra_del_documento_despues_de_los_movimientos()
     {
         await _repositorio.CrearAsync(Factura() with
         {
             Observaciones = "Entregar en almacén",
-            // Retencion1 = 125.5,
             TextoExtra1 = "OC-991",
             TextoExtra3 = "Ruta 4",
         });
 
         Assert.Equal("actualizarDocumento 10", _sesion.Llamadas[^1]);
         Assert.Equal(
-            [("COBSERVACIONES", "Entregar en almacén"), ("CTEXTOEXTRA1", "OC-991"), ("CTEXTOEXTRA3", "Ruta 4"), ("CRETENCION1", "125.5")],
+            [("COBSERVACIONES", "Entregar en almacén"), ("CTEXTOEXTRA1", "OC-991"), ("CTEXTOEXTRA3", "Ruta 4")],
             _documentos.CamposDocumento[10]);
     }
 
@@ -161,27 +159,26 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Descuento_y_retencion_invalidos_se_rechazan()
+    public async Task Descuentos_invalidos_se_rechazan()
     {
         var factura = Factura(
             new("P1", "1", 1, 100, PorcentajeDescuento: 5, ImporteDescuento: 5),
             new("P2", "1", 1, 100, PorcentajeDescuento: 101),
-            new("P3", "1", 1, 100, ImporteDescuento: 150)); //with { Retencion1 = -1 };
+            new("P3", "1", 1, 100, ImporteDescuento: 150));
 
         var error = await Assert.ThrowsAsync<ValidationException>(() => _repositorio.CrearAsync(factura));
 
         Assert.Equal(
-            ["Movimientos[0]", "Movimientos[1]", "Movimientos[2]", "Retencion1"],
+            ["Movimientos[0]", "Movimientos[1]", "Movimientos[2]"],
             error.Errors.Keys.Order(StringComparer.Ordinal));
-        Assert.Equal(2, error.Errors["Movimientos[1]"].Length);
     }
 
     [Fact]
-    public async Task Pasa_la_serie_indicada_al_pedir_el_folio()
+    public async Task Envia_el_agente_indicado_en_el_encabezado()
     {
-        await _repositorio.CrearAsync(Factura() with { Serie = "B" });
+        await _repositorio.CrearAsync(Factura() with { CodigoAgente = "AG01" });
 
-        Assert.Contains("siguienteFolio 4 'B'", _sesion.Llamadas);
+        Assert.Equal("AG01", Assert.Single(_documentos.Documentos).aCodigoAgente);
     }
 
     [Fact]
@@ -201,7 +198,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
 
         Assert.Equal(3, error.Codigo);
         Assert.Equal(
-            [$"abrir {Empresa}", "siguienteFolio 4 ''", "altaDocumento FA-1", "altaMovimiento 10#1", "altaMovimiento 10#2", "borrarDocumento 10"],
+            [$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-1", "altaMovimiento 10#1", "altaMovimiento 10#2", "borrarDocumento 10"],
             _sesion.Llamadas);
     }
 
@@ -225,7 +222,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         var error = await Assert.ThrowsAsync<ComercialSdkException>(() => _repositorio.CrearAsync(Factura()));
 
         Assert.Equal(2, error.Codigo);
-        Assert.Equal([$"abrir {Empresa}", "siguienteFolio 4 ''", "altaDocumento FA-1"], _sesion.Llamadas);
+        Assert.Equal([$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-1"], _sesion.Llamadas);
     }
 
     [Fact]
@@ -243,7 +240,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
     [Fact]
     public async Task Datos_invalidos_se_rechazan_sin_llegar_al_SDK()
     {
-        var factura = new NuevaFactura(" ", null, new DateOnly(2026, 3, 7), "", null,
+        var factura = new NuevaFactura(" ", new DateOnly(2026, 3, 7), "", null,
             [new("PROD01", "1", 0, 10), new("", "", 1, -1)]);
 
         var error = await Assert.ThrowsAsync<ValidationException>(() => _repositorio.CrearAsync(factura));

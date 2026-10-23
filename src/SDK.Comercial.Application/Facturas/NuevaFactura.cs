@@ -3,23 +3,25 @@ using SDK.Comercial.Application.Common.Exceptions;
 namespace SDK.Comercial.Application.Facturas;
 
 /// <param name="CodigoConcepto">Concepto de documento de Comercial.</param>
-/// <param name="Serie">Serie del documento; nula o vacía usa la serie configurada en el concepto.</param>
 /// <param name="Fecha">Fecha del documento.</param>
 /// <param name="CodigoCliente">Código del cliente.</param>
 /// <param name="Referencia">Referencia opcional del documento.</param>
 /// <param name="Movimientos">Partidas de la factura; debe haber al menos una.</param>
+/// <param name="CodigoAgente">Código opcional del agente.</param>
 /// <param name="Observaciones">Observaciones opcionales del documento (<c>COBSERVACIONES</c>).</param>
 /// <param name="TextoExtra1">Texto extra 1 opcional del documento (<c>CTEXTOEXTRA1</c>).</param>
 /// <param name="TextoExtra2">Texto extra 2 opcional del documento (<c>CTEXTOEXTRA2</c>).</param>
 /// <param name="TextoExtra3">Texto extra 3 opcional del documento (<c>CTEXTOEXTRA3</c>).</param>
-/// <remarks>Los importes y porcentaje de impuestos y retenciones se calculan con base a la configuracion del concepto. </remarks>
+/// <remarks>
+/// La serie la toma Comercial del concepto, y los impuestos y retenciones se calculan con la configuración del concepto.
+/// </remarks>
 public sealed record NuevaFactura(
     string CodigoConcepto,
-    string? Serie,
     DateOnly Fecha,
     string CodigoCliente,
     string? Referencia,
     IReadOnlyList<NuevoMovimiento> Movimientos,
+    string? CodigoAgente = null,
     string? Observaciones = null,
     string? TextoExtra1 = null,
     string? TextoExtra2 = null,
@@ -87,7 +89,6 @@ public sealed record NuevaFactura(
                 {
                     mensajes.Add("El importe de descuento no puede ser mayor que el importe del movimiento.");
                 }
-                
 
                 if (mensajes.Count > 0)
                 {
@@ -121,7 +122,7 @@ public sealed record NuevoMovimiento(
 
 /// <param name="IdDocumento">Identificador interno asignado por Comercial.</param>
 /// <param name="CodigoConcepto">Concepto con el que se creó.</param>
-/// <param name="Serie">Serie resuelta por el SDK.</param>
+/// <param name="Serie">Serie del concepto, asignada por el SDK.</param>
 /// <param name="Folio">Folio asignado.</param>
 /// <param name="IdMovimientos">Identificadores de los movimientos, en el mismo orden que se enviaron.</param>
 public sealed record FacturaCreada(

@@ -61,7 +61,6 @@ public sealed class FacturaRepositoryIntegracionTests(SdkRealFixture sdk) : ICla
 
     private static NuevaFactura Factura(string producto) => new(
         Configuracion.Concepto!,
-        Serie: null,
         Fecha: DateOnly.FromDateTime(DateTime.Today),
         Configuracion.Cliente!,
         Referencia: "Prueba integración",

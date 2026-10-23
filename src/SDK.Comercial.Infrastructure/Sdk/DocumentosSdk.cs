@@ -8,10 +8,10 @@ namespace SDK.Comercial.Infrastructure.Sdk;
 internal sealed class DocumentosSdk : IDocumentosSdk
 {
     /// <inheritdoc />
-    public (string Serie, double Folio) SiguienteFolio(string codigoConcepto, string serie)
+    public (string Serie, double Folio) SiguienteFolio(string codigoConcepto)
     {
-        // La serie es de entrada y salida: el SDK escribe en el buffer la serie que usará.
-        var bufferSerie = new StringBuilder(serie, MgwServicios.TamanoBuffer);
+        // La serie es solo de salida: el SDK escribe la del concepto aunque se le pase otra.
+        var bufferSerie = new StringBuilder(MgwServicios.TamanoBuffer);
         var folio = 0d;
         SdkResultado.Verificar(MgwServicios.fSiguienteFolio(codigoConcepto, bufferSerie, ref folio));
         return (bufferSerie.ToString().Trim(), folio);

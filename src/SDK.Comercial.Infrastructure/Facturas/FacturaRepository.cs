@@ -9,7 +9,7 @@ namespace SDK.Comercial.Infrastructure.Facturas;
 
 /// <summary>
 /// Crea facturas con las funciones de alto nivel del SDK: folio → encabezado → movimientos, y edita después
-/// los campos que esas estructuras no incluyen (observaciones, textos extra y retenciones).
+/// los campos que esas estructuras no incluyen (observaciones y textos extra).
 /// Todo ocurre dentro de una sola operación de la cola, así ningún otro trabajo puede intercalarse
 /// entre el alta del documento y la de sus movimientos.
 /// </summary>
@@ -29,7 +29,7 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
     {
         contexto.UsarEmpresa();
 
-        var (serie, folio) = documentos.SiguienteFolio(factura.CodigoConcepto, factura.Serie ?? string.Empty);
+        var (serie, folio) = documentos.SiguienteFolio(factura.CodigoConcepto);
         var idDocumento = documentos.AltaDocumento(new tDocumento
         {
             aFolio = folio,
@@ -38,10 +38,9 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
             aSistemaOrigen = SistemaOrigen,
             aCodConcepto = factura.CodigoConcepto,
             aSerie = serie,
-            // tDocumento.aFecha se interpreta como mm/dd/aaaa, sin depender de la cultura del servidor.
             aFecha = factura.Fecha.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture),
             aCodigoCteProv = factura.CodigoCliente,
-            aCodigoAgente = string.Empty,
+            aCodigoAgente = factura.CodigoAgente ?? string.Empty,
             aReferencia = factura.Referencia ?? string.Empty,
         });
 
@@ -65,7 +64,7 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
                 });
                 idMovimientos.Add(idMovimiento);
 
-                // La estructura del alta no trae observaciones ni retenciones: se escriben editando el movimiento.
+                // La estructura del alta no trae observaciones: se escriben editando el movimiento.
                 var camposMovimiento = CamposMovimiento(m);
                 if (camposMovimiento.Count > 0)
                 {
@@ -73,7 +72,6 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
                 }
             }
 
-            // Al final, para que la retención indicada no la sobrescriba el recálculo de los movimientos.
             var camposDocumento = CamposDocumento(factura);
             if (camposDocumento.Count > 0)
             {
@@ -119,9 +117,6 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
             }
         }
     }
-
-    // fSetDato* recibe texto: siempre con punto decimal, sin depender de la cultura del servidor.
-    private static string Numero(double valor) => valor.ToString(CultureInfo.InvariantCulture);
 
     private void DescartarDocumento(int idDocumento)
     {

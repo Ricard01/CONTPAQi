@@ -12,7 +12,7 @@ public class Facturas : IEndpointGroup
 
     [EndpointSummary("Crea una factura")]
     [EndpointDescription("Da de alta en la empresa predeterminada un documento con sus movimientos. " +
-                         "El folio lo asigna el SDK con el siguiente disponible del concepto y serie.")]
+                         "La serie y el folio los asigna el SDK con el siguiente disponible del concepto.")]
     public static async Task<IResult> CrearFactura(IFacturaRepository facturas, NuevaFactura factura, CancellationToken cancellationToken)
     {
         var resultado = await facturas.CrearAsync(factura, cancellationToken);

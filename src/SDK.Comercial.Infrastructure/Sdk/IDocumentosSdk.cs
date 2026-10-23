@@ -11,8 +11,8 @@ namespace SDK.Comercial.Infrastructure.Sdk;
 /// </summary>
 internal interface IDocumentosSdk
 {
-    /// <summary>Siguiente folio disponible del concepto (<c>fSiguienteFolio</c>), con la serie resuelta por el SDK.</summary>
-    (string Serie, double Folio) SiguienteFolio(string codigoConcepto, string serie);
+    /// <summary>Serie del concepto y su siguiente folio disponible (<c>fSiguienteFolio</c>).</summary>
+    (string Serie, double Folio) SiguienteFolio(string codigoConcepto);
 
     /// <summary>Da de alta el encabezado del documento (<c>fAltaDocumento</c>) y devuelve su identificador.</summary>
     int AltaDocumento(tDocumento documento);
