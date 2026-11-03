@@ -28,7 +28,20 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
     private FacturaCreada Crear(SdkContexto contexto, NuevaFactura factura)
     {
         contexto.UsarEmpresa();
+        try
+        {
+            return CrearDocumento(factura);
+        }
+        finally
+        {
+            // Mientras la sesión del SDK siga con la empresa abierta, Comercial reporta el último documento
+            // que tocó como "en uso por otro usuario". Cerrarla lo libera; el siguiente trabajo la reabre con UsarEmpresa().
+            contexto.CerrarEmpresa();
+        }
+    }
 
+    private FacturaCreada CrearDocumento(NuevaFactura factura)
+    {
         var (serie, folio) = documentos.SiguienteFolio(factura.CodigoConcepto);
         var idDocumento = documentos.AltaDocumento(new tDocumento
         {

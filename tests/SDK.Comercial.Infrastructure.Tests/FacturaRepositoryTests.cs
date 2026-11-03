@@ -56,7 +56,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         var creada = await _repositorio.CrearAsync(Factura());
 
         Assert.Equal(
-            [$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-57", "altaMovimiento 10#1", "altaMovimiento 10#2", "actualizarMovimiento 101"],
+            [$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-57", "altaMovimiento 10#1", "altaMovimiento 10#2", "actualizarMovimiento 101", "cerrar"],
             _sesion.Llamadas);
         Assert.Equal(10, creada.IdDocumento);
         Assert.Equal("4", creada.CodigoConcepto);
@@ -140,7 +140,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
             TextoExtra3 = "Ruta 4",
         });
 
-        Assert.Equal("actualizarDocumento 10", _sesion.Llamadas[^1]);
+        Assert.Equal(["actualizarDocumento 10", "cerrar"], _sesion.Llamadas[^2..]);
         Assert.Equal(
             [("COBSERVACIONES", "Entregar en almacén"), ("CTEXTOEXTRA1", "OC-991"), ("CTEXTOEXTRA3", "Ruta 4")],
             _documentos.CamposDocumento[10]);
@@ -155,7 +155,18 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
             _repositorio.CrearAsync(Factura() with { Observaciones = "x" }));
 
         Assert.Equal(5, error.Codigo);
-        Assert.Equal("borrarDocumento 10", _sesion.Llamadas[^1]);
+        Assert.Equal(["borrarDocumento 10", "cerrar"], _sesion.Llamadas[^2..]);
+    }
+
+    [Fact]
+    public async Task Cierra_la_empresa_al_terminar_y_la_reabre_en_la_siguiente_factura()
+    {
+        await _repositorio.CrearAsync(Factura());
+        await _repositorio.CrearAsync(Factura());
+
+        Assert.Equal(2, _sesion.Llamadas.Count(l => l == $"abrir {Empresa}"));
+        Assert.Equal(2, _sesion.Llamadas.Count(l => l == "cerrar"));
+        Assert.Equal("cerrar", _sesion.Llamadas[^1]);
     }
 
     [Fact]
@@ -198,7 +209,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
 
         Assert.Equal(3, error.Codigo);
         Assert.Equal(
-            [$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-1", "altaMovimiento 10#1", "altaMovimiento 10#2", "borrarDocumento 10"],
+            [$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-1", "altaMovimiento 10#1", "altaMovimiento 10#2", "borrarDocumento 10", "cerrar"],
             _sesion.Llamadas);
     }
 
@@ -222,7 +233,7 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         var error = await Assert.ThrowsAsync<ComercialSdkException>(() => _repositorio.CrearAsync(Factura()));
 
         Assert.Equal(2, error.Codigo);
-        Assert.Equal([$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-1"], _sesion.Llamadas);
+        Assert.Equal([$"abrir {Empresa}", "siguienteFolio 4", "altaDocumento FA-1", "cerrar"], _sesion.Llamadas);
     }
 
     [Fact]

@@ -25,7 +25,7 @@ Estas decisiones son fijas; no proponer alternativas salvo que el usuario lo pid
    - El consumidor es un hilo dedicado (`Thread` propio, no del `ThreadPool`) creado por un `BackgroundService`/`IHostedService`, que:
      - inicializa el SDK una sola vez al arrancar y lo termina al detenerse el servicio;
      - procesa los trabajos uno por uno, en orden;
-     - abre la empresa configurada al arrancar y la mantiene abierta (si falla, la reintenta en el siguiente trabajo);
+     - abre la empresa configurada al arrancar y la mantiene abierta (si falla, la reintenta en el siguiente trabajo); las operaciones que **escriben documentos** la cierran al terminar (`contexto.CerrarEmpresa()` en un `finally`), porque mientras la sesión del SDK siga abierta Comercial reporta el último documento tocado como "en uso por otro usuario". El siguiente trabajo la reabre con `UsarEmpresa()`;
      - captura cualquier excepción del trabajo y la devuelve al llamador sin tumbar el hilo.
    - Soportar `CancellationToken`: si el llamador cancela antes de que el trabajo empiece, se descarta; una vez iniciado en el SDK, se deja terminar.
    - Preferir un canal acotado (`Channel.CreateBounded`) para no acumular trabajo sin límite; el tamaño va en configuración.
