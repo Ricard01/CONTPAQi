@@ -1,0 +1,26 @@
+# Salida centralizada de compilación y publicación (.NET ArtifactsPath)
+artifacts/
+publish/
+
+# Carpetas estándar de compilación / NuGet (por si se compila sin ArtifactsPath)
+bin/
+obj/
+packages/
+
+# Archivos de IDE / usuario / caché local
+.vs/
+.idea/
+_ReSharper.Caches/
+*.user
+*.suo
+*.DotSettings.user
+*.iml
+
+# Resultados de pruebas y cobertura
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Logs locales si se generan en pruebas/consola
+*.log
