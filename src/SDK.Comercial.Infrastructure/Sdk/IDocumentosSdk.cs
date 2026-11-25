@@ -36,4 +36,23 @@ internal interface IDocumentosSdk
 
     /// <summary>Localiza el documento por su identificador y lo borra (<c>fBuscarIdDocumento</c> + <c>fBorraDocumento</c>).</summary>
     void BorrarDocumento(int idDocumento);
+
+    /// <summary>
+    /// Localiza el documento por su identificador y devuelve los datos que identifican su tipo
+    /// (<c>fBuscarIdDocumento</c> → <c>fLeeDatoDocumento</c> → <c>fBuscaIdConceptoDocto</c>).
+    /// Devuelve <c>null</c> si no existe.
+    /// </summary>
+    DatosDocumentoSdk? LeerDocumento(int idDocumento);
+
+    /// <summary>
+    /// UUID del CFDI del documento (<c>fDocumentoUUID</c>); vacío si no está timbrado.
+    /// Solo aplica a documentos con folio digital (facturas): para otros tipos el SDK responde error.
+    /// </summary>
+    string ObtenerUuid(string codigoConcepto, string serie, double folio);
 }
+
+/// <param name="TipoDocumento">Valor de <c>CIDDOCUMENTODE</c> (4 = factura).</param>
+/// <param name="CodigoConcepto">Código del concepto del documento.</param>
+/// <param name="Serie">Serie del documento.</param>
+/// <param name="Folio">Folio del documento.</param>
+internal sealed record DatosDocumentoSdk(int TipoDocumento, string CodigoConcepto, string Serie, double Folio);

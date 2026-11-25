@@ -1,3 +1,5 @@
+using System.Globalization;
+using Ardalis.GuardClauses;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using SDK.Comercial.Application.Common.Exceptions;
@@ -144,6 +146,85 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
         Assert.Equal(
             [("COBSERVACIONES", "Entregar en almacén"), ("CTEXTOEXTRA1", "OC-991"), ("CTEXTOEXTRA3", "Ruta 4")],
             _documentos.CamposDocumento[10]);
+    }
+
+    [Fact]
+    public async Task Escribe_destinatario_y_campos_extra_con_formato_independiente_de_la_cultura()
+    {
+        var culturaOriginal = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo("es-MX");
+        try
+        {
+            await _repositorio.CrearAsync(Factura(new NuevoMovimiento("SERV01", "1", 1, 99)
+            {
+                TextoExtra2 = "Serie 77",
+                FechaExtra = new DateOnly(2026, 12, 31),
+                ImporteExtra4 = 1234.5,
+            }) with
+            {
+                Destinatario = "Ricardo Chavez",
+                FechaExtra = new DateOnly(2026, 1, 5),
+                ImporteExtra1 = 12.5,
+                ImporteExtra3 = 0,
+            });
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = culturaOriginal;
+        }
+
+        Assert.Equal(
+            [("CDESTINATARIO", "Ricardo Chavez"), ("CFECHAEXTRA", "01/05/2026"), ("CIMPORTEEXTRA1", "12.5"), ("CIMPORTEEXTRA3", "0")],
+            _documentos.CamposDocumento[10]);
+        Assert.Equal(
+            [("CTEXTOEXTRA2", "Serie 77"), ("CFECHAEXTRA", "12/31/2026"), ("CIMPORTEEXTRA4", "1234.5")],
+            _documentos.CamposMovimiento[100]);
+    }
+
+    [Fact]
+    public async Task Borra_una_factura_sin_timbrar_con_la_empresa_abierta()
+    {
+        await _repositorio.BorrarAsync(10);
+
+        Assert.Equal(
+            [$"abrir {Empresa}", "leerDocumento 10", "obtenerUuid 4 FA-1", "borrarDocumento 10", "cerrar"],
+            _sesion.Llamadas);
+    }
+
+    [Fact]
+    public async Task No_borra_una_factura_timbrada()
+    {
+        _documentos.DatosDocumento = new DatosDocumentoSdk(4, "4", "FA", 9);
+        _documentos.Uuid = "0C1D2E3F-0000-4000-8000-000000000000";
+
+        var error = await Assert.ThrowsAsync<ValidationException>(() => _repositorio.BorrarAsync(10));
+
+        Assert.Contains("timbrada", Assert.Single(error.Errors["idDocumento"]));
+        Assert.DoesNotContain("borrarDocumento 10", _sesion.Llamadas);
+        Assert.Equal("cerrar", _sesion.Llamadas[^1]);
+    }
+
+    [Fact]
+    public async Task No_borra_documentos_que_no_son_factura()
+    {
+        _documentos.DatosDocumento = new DatosDocumentoSdk(1, "1", string.Empty, 3);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _repositorio.BorrarAsync(10));
+
+        // Con un documento que no es factura ni siquiera se consulta el UUID (el SDK fallaría).
+        Assert.DoesNotContain(_sesion.Llamadas, l => l.StartsWith("obtenerUuid", StringComparison.Ordinal));
+        Assert.DoesNotContain("borrarDocumento 10", _sesion.Llamadas);
+    }
+
+    [Fact]
+    public async Task Borrar_un_documento_inexistente_responde_no_encontrado()
+    {
+        _documentos.DatosDocumento = null;
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _repositorio.BorrarAsync(999));
+
+        Assert.DoesNotContain("borrarDocumento 999", _sesion.Llamadas);
+        Assert.Equal("cerrar", _sesion.Llamadas[^1]);
     }
 
     [Fact]

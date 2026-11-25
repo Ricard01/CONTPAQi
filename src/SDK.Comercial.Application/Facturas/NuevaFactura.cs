@@ -12,6 +12,12 @@ namespace SDK.Comercial.Application.Facturas;
 /// <param name="TextoExtra1">Texto extra 1 opcional del documento (<c>CTEXTOEXTRA1</c>).</param>
 /// <param name="TextoExtra2">Texto extra 2 opcional del documento (<c>CTEXTOEXTRA2</c>).</param>
 /// <param name="TextoExtra3">Texto extra 3 opcional del documento (<c>CTEXTOEXTRA3</c>).</param>
+/// <param name="Destinatario">Destinatario opcional del documento (<c>CDESTINATARIO</c>); al convertir una cotización conserva el de origen.</param>
+/// <param name="FechaExtra">Fecha extra opcional del documento (<c>CFECHAEXTRA</c>).</param>
+/// <param name="ImporteExtra1">Importe extra 1 opcional del documento (<c>CIMPORTEEXTRA1</c>).</param>
+/// <param name="ImporteExtra2">Importe extra 2 opcional del documento (<c>CIMPORTEEXTRA2</c>).</param>
+/// <param name="ImporteExtra3">Importe extra 3 opcional del documento (<c>CIMPORTEEXTRA3</c>).</param>
+/// <param name="ImporteExtra4">Importe extra 4 opcional del documento (<c>CIMPORTEEXTRA4</c>).</param>
 /// <remarks>
 /// La serie la toma Comercial del concepto, y los impuestos y retenciones se calculan con la configuración del concepto.
 /// </remarks>
@@ -25,7 +31,13 @@ public sealed record NuevaFactura(
     string? Observaciones = null,
     string? TextoExtra1 = null,
     string? TextoExtra2 = null,
-    string? TextoExtra3 = null)
+    string? TextoExtra3 = null,
+    string? Destinatario = null,
+    DateOnly? FechaExtra = null,
+    double? ImporteExtra1 = null,
+    double? ImporteExtra2 = null,
+    double? ImporteExtra3 = null,
+    double? ImporteExtra4 = null)
 {
     /// <summary>Lanza <see cref="ValidationException"/> con todos los errores encontrados.</summary>
     public void Validar()
@@ -111,6 +123,14 @@ public sealed record NuevaFactura(
 /// <param name="Observaciones">Observaciones opcionales del movimiento (<c>COBSERVAMOV</c>).</param>
 /// <param name="PorcentajeDescuento">Porcentaje opcional del descuento 1; excluyente con <paramref name="ImporteDescuento"/>.</param>
 /// <param name="ImporteDescuento">Importe opcional del descuento 1; excluyente con <paramref name="PorcentajeDescuento"/>.</param>
+/// <param name="TextoExtra1">Texto extra 1 opcional del movimiento (<c>CTEXTOEXTRA1</c>).</param>
+/// <param name="TextoExtra2">Texto extra 2 opcional del movimiento (<c>CTEXTOEXTRA2</c>).</param>
+/// <param name="TextoExtra3">Texto extra 3 opcional del movimiento (<c>CTEXTOEXTRA3</c>).</param>
+/// <param name="FechaExtra">Fecha extra opcional del movimiento (<c>CFECHAEXTRA</c>).</param>
+/// <param name="ImporteExtra1">Importe extra 1 opcional del movimiento (<c>CIMPORTEEXTRA1</c>).</param>
+/// <param name="ImporteExtra2">Importe extra 2 opcional del movimiento (<c>CIMPORTEEXTRA2</c>).</param>
+/// <param name="ImporteExtra3">Importe extra 3 opcional del movimiento (<c>CIMPORTEEXTRA3</c>).</param>
+/// <param name="ImporteExtra4">Importe extra 4 opcional del movimiento (<c>CIMPORTEEXTRA4</c>).</param>
 public sealed record NuevoMovimiento(
     string CodigoProducto,
     string CodigoAlmacen,
@@ -118,7 +138,15 @@ public sealed record NuevoMovimiento(
     double Precio,
     string? Observaciones = null,
     double? PorcentajeDescuento = null,
-    double? ImporteDescuento = null);
+    double? ImporteDescuento = null,
+    string? TextoExtra1 = null,
+    string? TextoExtra2 = null,
+    string? TextoExtra3 = null,
+    DateOnly? FechaExtra = null,
+    double? ImporteExtra1 = null,
+    double? ImporteExtra2 = null,
+    double? ImporteExtra3 = null,
+    double? ImporteExtra4 = null);
 
 /// <param name="IdDocumento">Identificador interno asignado por Comercial.</param>
 /// <param name="CodigoConcepto">Concepto con el que se creó.</param>

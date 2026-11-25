@@ -86,6 +86,24 @@ internal sealed class FakeDocumentosSdk(FakeSesionComercialSdk sesion) : IDocume
         CamposMovimiento[idMovimiento] = campos;
     }
 
+    /// <summary>Lo que devolverá <see cref="LeerDocumento"/>: por omisión, una factura. Nulo simula que no existe.</summary>
+    public DatosDocumentoSdk? DatosDocumento { get; set; } = new(4, "4", "FA", 1);
+
+    /// <summary>UUID que devolverá <see cref="ObtenerUuid"/>; vacío = sin timbrar.</summary>
+    public string Uuid { get; set; } = string.Empty;
+
+    public DatosDocumentoSdk? LeerDocumento(int idDocumento)
+    {
+        Registrar($"leerDocumento {idDocumento}");
+        return DatosDocumento;
+    }
+
+    public string ObtenerUuid(string codigoConcepto, string serie, double folio)
+    {
+        Registrar($"obtenerUuid {codigoConcepto} {serie}-{folio}");
+        return Uuid;
+    }
+
     public void BorrarDocumento(int idDocumento)
     {
         Registrar($"borrarDocumento {idDocumento}");

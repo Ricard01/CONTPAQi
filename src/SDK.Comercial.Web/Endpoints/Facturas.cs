@@ -8,6 +8,18 @@ public class Facturas : IEndpointGroup
     public static void Map(RouteGroupBuilder groupBuilder)
     {
         groupBuilder.MapPost(CrearFactura);
+        groupBuilder.MapDelete(BorrarFactura, "{idDocumento:int}");
+    }
+
+    [EndpointSummary("Borra una factura sin timbrar")]
+    [EndpointDescription("Borra de la empresa predeterminada una factura que todavía no está timbrada. " +
+                         "Sirve para deshacer una factura recién creada cuando el paso siguiente del cliente falla. " +
+                         "Responde 404 si el documento no es una factura y 400 si ya está timbrada.")]
+    public static async Task<IResult> BorrarFactura(IFacturaRepository facturas, int idDocumento, CancellationToken cancellationToken)
+    {
+        await facturas.BorrarAsync(idDocumento, cancellationToken);
+
+        return TypedResults.NoContent();
     }
 
     [EndpointSummary("Crea una factura")]
