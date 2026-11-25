@@ -1,4 +1,3 @@
-using System.Globalization;
 using Ardalis.GuardClauses;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -149,35 +148,21 @@ public sealed class FacturaRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Escribe_destinatario_y_campos_extra_con_formato_independiente_de_la_cultura()
+    public async Task Escribe_destinatario_y_textos_extra_de_documento_y_movimiento()
     {
-        var culturaOriginal = CultureInfo.CurrentCulture;
-        CultureInfo.CurrentCulture = new CultureInfo("es-MX");
-        try
+        await _repositorio.CrearAsync(Factura(new NuevoMovimiento("SERV01", "1", 1, 99)
         {
-            await _repositorio.CrearAsync(Factura(new NuevoMovimiento("SERV01", "1", 1, 99)
-            {
-                TextoExtra2 = "Serie 77",
-                FechaExtra = new DateOnly(2026, 12, 31),
-                ImporteExtra4 = 1234.5,
-            }) with
-            {
-                Destinatario = "Ricardo Chavez",
-                FechaExtra = new DateOnly(2026, 1, 5),
-                ImporteExtra1 = 12.5,
-                ImporteExtra3 = 0,
-            });
-        }
-        finally
+            TextoExtra2 = "Serie 77",
+        }) with
         {
-            CultureInfo.CurrentCulture = culturaOriginal;
-        }
+            Destinatario = "Ricardo Chavez",
+        });
 
         Assert.Equal(
-            [("CDESTINATARIO", "Ricardo Chavez"), ("CFECHAEXTRA", "01/05/2026"), ("CIMPORTEEXTRA1", "12.5"), ("CIMPORTEEXTRA3", "0")],
+            [("CDESTINATARIO", "Ricardo Chavez")],
             _documentos.CamposDocumento[10]);
         Assert.Equal(
-            [("CTEXTOEXTRA2", "Serie 77"), ("CFECHAEXTRA", "12/31/2026"), ("CIMPORTEEXTRA4", "1234.5")],
+            [("CTEXTOEXTRA2", "Serie 77")],
             _documentos.CamposMovimiento[100]);
     }
 

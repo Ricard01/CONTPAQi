@@ -106,67 +106,32 @@ internal sealed class FacturaRepository(SdkColaTrabajo cola, IDocumentosSdk docu
 
     private static List<(string Campo, string Valor)> CamposMovimiento(NuevoMovimiento movimiento)
     {
-        var campos = new CamposSdk();
-        campos.Agregar("COBSERVAMOV", movimiento.Observaciones);
-        campos.Agregar("CTEXTOEXTRA1", movimiento.TextoExtra1);
-        campos.Agregar("CTEXTOEXTRA2", movimiento.TextoExtra2);
-        campos.Agregar("CTEXTOEXTRA3", movimiento.TextoExtra3);
-        campos.Agregar("CFECHAEXTRA", movimiento.FechaExtra);
-        campos.Agregar("CIMPORTEEXTRA1", movimiento.ImporteExtra1);
-        campos.Agregar("CIMPORTEEXTRA2", movimiento.ImporteExtra2);
-        campos.Agregar("CIMPORTEEXTRA3", movimiento.ImporteExtra3);
-        campos.Agregar("CIMPORTEEXTRA4", movimiento.ImporteExtra4);
+        var campos = new List<(string Campo, string Valor)>();
+        AgregarCampo(campos, "COBSERVAMOV", movimiento.Observaciones);
+        AgregarCampo(campos, "CTEXTOEXTRA1", movimiento.TextoExtra1);
+        AgregarCampo(campos, "CTEXTOEXTRA2", movimiento.TextoExtra2);
+        AgregarCampo(campos, "CTEXTOEXTRA3", movimiento.TextoExtra3);
 
-        return campos.Lista;
+        return campos;
     }
 
     private static List<(string Campo, string Valor)> CamposDocumento(NuevaFactura factura)
     {
-        var campos = new CamposSdk();
-        campos.Agregar("COBSERVACIONES", factura.Observaciones);
-        campos.Agregar("CTEXTOEXTRA1", factura.TextoExtra1);
-        campos.Agregar("CTEXTOEXTRA2", factura.TextoExtra2);
-        campos.Agregar("CTEXTOEXTRA3", factura.TextoExtra3);
-        campos.Agregar("CDESTINATARIO", factura.Destinatario);
-        campos.Agregar("CFECHAEXTRA", factura.FechaExtra);
-        campos.Agregar("CIMPORTEEXTRA1", factura.ImporteExtra1);
-        campos.Agregar("CIMPORTEEXTRA2", factura.ImporteExtra2);
-        campos.Agregar("CIMPORTEEXTRA3", factura.ImporteExtra3);
-        campos.Agregar("CIMPORTEEXTRA4", factura.ImporteExtra4);
+        var campos = new List<(string Campo, string Valor)>();
+        AgregarCampo(campos, "COBSERVACIONES", factura.Observaciones);
+        AgregarCampo(campos, "CTEXTOEXTRA1", factura.TextoExtra1);
+        AgregarCampo(campos, "CTEXTOEXTRA2", factura.TextoExtra2);
+        AgregarCampo(campos, "CTEXTOEXTRA3", factura.TextoExtra3);
+        AgregarCampo(campos, "CDESTINATARIO", factura.Destinatario);
 
-        return campos.Lista;
+        return campos;
     }
 
-    /// <summary>
-    /// Acumula los campos opcionales con el formato que acepta <c>fSetDato*</c>: fechas mm/dd/aaaa e importes
-    /// con punto decimal, independientes de la cultura. Los valores nulos o vacíos no se escriben.
-    /// </summary>
-    private sealed class CamposSdk
+    private static void AgregarCampo(List<(string Campo, string Valor)> campos, string campo, string? valor)
     {
-        public List<(string Campo, string Valor)> Lista { get; } = [];
-
-        public void Agregar(string campo, string? valor)
+        if (!string.IsNullOrEmpty(valor))
         {
-            if (!string.IsNullOrEmpty(valor))
-            {
-                Lista.Add((campo, valor));
-            }
-        }
-
-        public void Agregar(string campo, DateOnly? valor)
-        {
-            if (valor is { } fecha)
-            {
-                Lista.Add((campo, fecha.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture)));
-            }
-        }
-
-        public void Agregar(string campo, double? valor)
-        {
-            if (valor is { } importe)
-            {
-                Lista.Add((campo, importe.ToString("R", CultureInfo.InvariantCulture)));
-            }
+            campos.Add((campo, valor));
         }
     }
 
